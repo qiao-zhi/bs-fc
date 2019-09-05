@@ -6,4 +6,5 @@ import cn.qs.bean.fc.FirstCharge;
 
 public interface FirstChargeMapper extends JpaRepository<FirstCharge, Integer> {
 
+	FirstCharge findByUserId(String userId);
 }

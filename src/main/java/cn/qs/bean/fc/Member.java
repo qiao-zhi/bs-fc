@@ -10,7 +10,9 @@ public class Member {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer userId; // 会员ID
+	private Integer id;
+
+	private String userId; // 会员ID
 
 	private String profit;
 	private String betAmount;
@@ -34,6 +36,11 @@ public class Member {
 	private String parentName; // 上级名称
 	private String getAmount;
 	private String profitability;
+
+	/**
+	 * 同步日期(标记同步的是哪一天的数据)
+	 */
+	private String syncDate;
 
 	public String getProfit() {
 		return profit;
@@ -211,23 +218,28 @@ public class Member {
 		this.profitability = profitability;
 	}
 
-	public Integer getUserId() {
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Integer userId) {
+	public void setUserId(String userId) {
 		this.userId = userId;
 	}
 
-	@Override
-	public String toString() {
-		return "Member [userId=" + userId + ", profit=" + profit + ", betAmount=" + betAmount + ", betCount=" + betCount
-				+ ", hbGetAmount=" + hbGetAmount + ", inCount=" + inCount + ", activityAmount=" + activityAmount
-				+ ", balance=" + balance + ", tipAmount=" + tipAmount + ", parentId=" + parentId + ", sendAmount="
-				+ sendAmount + ", inAmount=" + inAmount + ", returnAmount=" + returnAmount + ", grade=" + grade
-				+ ", userName=" + userName + ", rebateAmount=" + rebateAmount + ", hbSendAmount=" + hbSendAmount
-				+ ", outAmount=" + outAmount + ", outCount=" + outCount + ", cancelAmount=" + cancelAmount
-				+ ", parentName=" + parentName + ", getAmount=" + getAmount + ", profitability=" + profitability + "]";
+	public String getSyncDate() {
+		return syncDate;
+	}
+
+	public void setSyncDate(String syncDate) {
+		this.syncDate = syncDate;
 	}
 
 }

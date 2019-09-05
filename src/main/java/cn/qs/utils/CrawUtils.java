@@ -26,6 +26,7 @@ import com.alibaba.fastjson.JSONObject;
 import cn.qs.bean.fc.FirstCharge;
 import cn.qs.bean.fc.Member;
 import cn.qs.service.fc.FirstChargeService;
+import cn.qs.service.fc.MemberService;
 
 public class CrawUtils {
 
@@ -41,30 +42,21 @@ public class CrawUtils {
 
 	private static Map<String, String> cookies = new HashMap<String, String>();
 
-	static {
-		cookies.put("JSESSIONID", "B13B98A4C769D284A0E789D2B2BDF043");
-	}
-
 	public static void doCrawData() {
-		boolean loginSuccessed = login();
-		if (!loginSuccessed) {
-			throw new RuntimeException("登陆失败");
-		}
-
-		crawFirstChatges("", "");
+		// 不传日期代表爬当天数据
+		doCrawData("", "");
 	}
 
-	public static void main(String[] args) throws IOException {
+	public static void doCrawData(String startTime, String endTime) {
 		boolean loginSuccessed = login();
 		if (!loginSuccessed) {
 			throw new RuntimeException("登陆失败");
 		}
 
-		// crawMembers("", "");
+		crawMembers(startTime, endTime);
+		crawFirstChatges(startTime, endTime);
 
-		crawFirstChatges("", "");
-
-		// logout();
+		logout();
 	}
 
 	private static void crawMembers(String startTime, String endTime) {
@@ -89,20 +81,29 @@ public class CrawUtils {
 				break;
 			}
 
-			batchDisposeMemberStrs(MapUtils.getString(data, "result"));
+			batchDisposeMemberStrs(MapUtils.getString(data, "result"), startTime);
 		}
 
 	}
 
-	private static void batchDisposeMemberStrs(String memberStrs) {
+	private static void batchDisposeMemberStrs(String memberStrs, String syncDate) {
 		if (StringUtils.isEmpty(memberStrs)) {
 			return;
 		}
 
 		LOGGER.debug("memberStrs -> {}", memberStrs);
 		List<Member> members = JSONArray.parseArray(memberStrs, Member.class);
-		for (Member m : members) {
-			System.out.println(m);
+		for (Member member : members) {
+			member.setSyncDate(syncDate);
+
+			MemberService memberService = SpringBootUtils.getBean(MemberService.class);
+			Member findMember = memberService.findByUserIdAndSyncDate(member.getUserId(), syncDate);
+			if (findMember != null && findMember.getUserId() != null) {
+				member.setId(findMember.getId());
+				memberService.update(member);
+			} else {
+				memberService.add(member);
+			}
 		}
 
 	}
@@ -143,11 +144,12 @@ public class CrawUtils {
 		List<FirstCharge> firstCharges = JSONArray.parseArray(firstChargeStrs, FirstCharge.class);
 		for (FirstCharge firstCharge : firstCharges) {
 			FirstChargeService firstChargeService = SpringBootUtils.getBean(FirstChargeService.class);
-			FirstCharge findFirstCharge = firstChargeService.findById(firstCharge.getUserId());
+			FirstCharge findFirstCharge = firstChargeService.findByUserId(firstCharge.getUserId());
 			if (findFirstCharge != null && findFirstCharge.getUserId() != null) {
-				firstChargeService.update(findFirstCharge);
+				firstCharge.setId(findFirstCharge.getId());
+				firstChargeService.update(firstCharge);
 			} else {
-				firstChargeService.add(findFirstCharge);
+				firstChargeService.add(firstCharge);
 			}
 		}
 

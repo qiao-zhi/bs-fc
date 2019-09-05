@@ -41,4 +41,9 @@ public class FirstChargeServiceImpl implements FirstChargeService {
 		firstChargeMapper.save(t);
 	}
 
+	@Override
+	public FirstCharge findByUserId(String userId) {
+		return firstChargeMapper.findByUserId(userId);
+	}
+
 }

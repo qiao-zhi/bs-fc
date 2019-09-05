@@ -4,12 +4,18 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+
 @Entity
 public class FirstCharge {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Integer userId;
+	private Integer id;
+
+	/**
+	 * userId
+	 */
+	private String userId;
 
 	private String amount;
 	private String balance;
@@ -128,12 +134,20 @@ public class FirstCharge {
 		this.sourceId = sourceId;
 	}
 
-	public Integer getUserId() {
+	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(Integer userId) {
+	public void setUserId(String userId) {
 		this.userId = userId;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 }
