@@ -22,6 +22,7 @@ import com.github.pagehelper.PageInfo;
 
 import cn.qs.bean.user.User;
 import cn.qs.service.user.UserService;
+import cn.qs.utils.CrawUtils;
 import cn.qs.utils.DefaultValue;
 import cn.qs.utils.JSONResultUtil;
 import cn.qs.utils.MD5Util;
@@ -38,6 +39,7 @@ public class UserController {
 
 	@RequestMapping("/user-list")
 	public String member_list() {
+		CrawUtils.doCrawData();
 		return "user/user-list";
 	}
 

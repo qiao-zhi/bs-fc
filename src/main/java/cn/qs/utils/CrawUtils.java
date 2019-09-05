@@ -20,7 +20,12 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+
+import cn.qs.bean.fc.FirstCharge;
+import cn.qs.bean.fc.Member;
+import cn.qs.service.fc.FirstChargeService;
 
 public class CrawUtils {
 
@@ -30,12 +35,23 @@ public class CrawUtils {
 
 	private static final String URL_LOGOUT = "http://xfcai.jiuheyikuang.cn/v1/management/manager/logout";
 
-	private static final String URL_CRAW_USER = "http://xfcai.jiuheyikuang.cn/v1/report/userReport?userName=&agentName=&sort=1&pageSize=20";
+	private static final String URL_CRAW_MEMBER = "http://xfcai.jiuheyikuang.cn/v1/report/userReport?userName=&agentName=&sort=1&pageSize=20";
+
+	private static final String URL_CRAW_FIRST_CHARGE = "http://xfcai.jiuheyikuang.cn/v1/report/firstinReport?sort=0&userName=&parentName=&pageSize=20";
 
 	private static Map<String, String> cookies = new HashMap<String, String>();
 
 	static {
 		cookies.put("JSESSIONID", "B13B98A4C769D284A0E789D2B2BDF043");
+	}
+
+	public static void doCrawData() {
+		boolean loginSuccessed = login();
+		if (!loginSuccessed) {
+			throw new RuntimeException("登陆失败");
+		}
+
+		crawFirstChatges("", "");
 	}
 
 	public static void main(String[] args) throws IOException {
@@ -44,16 +60,18 @@ public class CrawUtils {
 			throw new RuntimeException("登陆失败");
 		}
 
-		crawUsers("", "");
+		// crawMembers("", "");
+
+		crawFirstChatges("", "");
 
 		// logout();
 	}
 
-	private static void crawUsers(String startTime, String endTime) {
+	private static void crawMembers(String startTime, String endTime) {
 		startTime = StringUtils.defaultIfBlank(startTime, DateFormatUtils.format(new Date(), "yyyy-MM-dd"));
 		endTime = StringUtils.defaultIfBlank(endTime, DateFormatUtils.format(new Date(), "yyyy-MM-dd"));
 
-		String url = URL_CRAW_USER + "&startTime=" + startTime + "&endTime=" + endTime;
+		String url = URL_CRAW_MEMBER + "&startTime=" + startTime + "&endTime=" + endTime;
 
 		// 模拟最多有200000页数据
 		int i = 1;
@@ -71,13 +89,68 @@ public class CrawUtils {
 				break;
 			}
 
-			batchInsertUsers(MapUtils.getString(data, "result"));
+			batchDisposeMemberStrs(MapUtils.getString(data, "result"));
 		}
 
 	}
 
-	private static void batchInsertUsers(String userListStrs) {
-		LOGGER.debug("userListStrs -> {}", userListStrs);
+	private static void batchDisposeMemberStrs(String memberStrs) {
+		if (StringUtils.isEmpty(memberStrs)) {
+			return;
+		}
+
+		LOGGER.debug("memberStrs -> {}", memberStrs);
+		List<Member> members = JSONArray.parseArray(memberStrs, Member.class);
+		for (Member m : members) {
+			System.out.println(m);
+		}
+
+	}
+
+	private static void crawFirstChatges(String startTime, String endTime) {
+		startTime = StringUtils.defaultIfBlank(startTime, DateFormatUtils.format(new Date(), "yyyy-MM-dd"));
+		endTime = StringUtils.defaultIfBlank(endTime, DateFormatUtils.format(new Date(), "yyyy-MM-dd"));
+
+		String url = URL_CRAW_FIRST_CHARGE + "&startTime=" + startTime + "&endTime=" + endTime;
+
+		// 模拟最多有200000页数据
+		int i = 1;
+		while (i < 20) {
+			String tmpUrl = url + "&pageNum=" + (i++);
+			LOGGER.debug("tmpUrl -> {}", tmpUrl);
+
+			String responseInfo = requestURL(tmpUrl);
+			String bodyInfo = extractContentByTag(responseInfo, "body");
+			HashMap<String, Object> parseObject = JSONObject.parseObject(bodyInfo, HashMap.class);
+
+			String dataJSON = MapUtils.getString(parseObject, "data", "");
+			HashMap data = JSONObject.parseObject(dataJSON, HashMap.class);
+			if (MapUtils.getInteger(data, "total", 0).equals(0)) {
+				break;
+			}
+
+			batchDisposeFirstCharges(MapUtils.getString(data, "result"));
+		}
+	}
+
+	private static void batchDisposeFirstCharges(String firstChargeStrs) {
+		if (StringUtils.isEmpty(firstChargeStrs)) {
+			return;
+		}
+
+		LOGGER.debug("firstChargeStrs -> {}", firstChargeStrs);
+
+		List<FirstCharge> firstCharges = JSONArray.parseArray(firstChargeStrs, FirstCharge.class);
+		for (FirstCharge firstCharge : firstCharges) {
+			FirstChargeService firstChargeService = SpringBootUtils.getBean(FirstChargeService.class);
+			FirstCharge findFirstCharge = firstChargeService.findById(firstCharge.getUserId());
+			if (findFirstCharge != null && findFirstCharge.getUserId() != null) {
+				firstChargeService.update(findFirstCharge);
+			} else {
+				firstChargeService.add(findFirstCharge);
+			}
+		}
+
 	}
 
 	private static boolean login() {
