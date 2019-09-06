@@ -39,7 +39,6 @@ public class UserController {
 
 	@RequestMapping("/user-list")
 	public String member_list() {
-		CrawUtils.doCrawData();
 		return "user/user-list";
 	}
 

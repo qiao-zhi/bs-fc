@@ -16,9 +16,9 @@
     
     <!--自己写的JS  -->
     <script type="text/javascript" th:src="${#httpServletRequest.getContextPath()+'/static/x-admin/MyJs/PublicFunctions.js'}"></script>
-    <script type="text/javascript" th:src="${#httpServletRequest.getContextPath()+'/static/x-admin/MyJs/message_list.js'}"></script>
+    <script type="text/javascript" th:src="${#httpServletRequest.getContextPath()+'/static/x-admin/MyJs/chargeReport_list.js'}"></script>
     
-    <span th:if="${session.user.roles} eq '1'">
+    <span th:if="${session.user.username} eq 'admin'">
     	<script>
     		var admin = true;
     	</script>
@@ -42,16 +42,35 @@
           <!--隐藏当前页和页号-->
           <input type="hidden" name="pageNum"/>
           <input type="hidden" name="pageSize"/>
+          <input type="text" name="user_name"  placeholder="请输入用户名" autocomplete="off" class="layui-input"/>
+          <input type="text" name="gmtCreated"  placeholder="请选择首充日期" id="test1" autocomplete="off" class="layui-input"/>
+          <button class="layui-btn" type="button" onclick="queryUsersFY()"><i class="layui-icon">&#xe615;</i></button>
+          <button class="layui-btn layui-btn-normal" type="button" onclick='clearQueryCondition(this)' title="点击重置查询条件"><i class="layui-icon">&#xe639;</i></button>
         </form>
       </div>
+      
       <table class="layui-table">
         <thead>
           <tr>
             <th>序号</th>
-            <th>ID</th>
-            <th>主题</th>
-            <th>创建时间</th>
-            <th>操作</th></tr>
+            <th>会员账号</th>
+            <th>当天</th>
+            <th>1天</th>
+            <th>2天</th>
+            <th>3天</th>
+            <th>4天</th>
+            <th>5天</th>
+            <th>6天</th>
+            <th>7天</th>
+            <th>8天</th>
+            <th>9天</th>
+            <th>10天</th>
+            <th>12天</th>
+            <th>12天</th>
+            <th>13天</th>
+            <th>14天</th>
+            <th>15天</th>
+           </tr>
         </thead>
         <tbody id="memberTbody">
         </tbody>
@@ -64,3 +83,14 @@
     </div>
   </body>
 </html>
+
+<script>
+layui.use('laydate', function(){
+  var laydate = layui.laydate;
+  
+  //常规用法
+  laydate.render({
+    elem: '#test1'
+  });
+});
+</script>
