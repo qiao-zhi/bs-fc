@@ -32,9 +32,6 @@ function showUsersTable(pageInfo){
             +'<td>'+replaceNull(users[i].id)+'</td>'
             +'<td>'+replaceNull(users[i].username)+'</td>'
             +'<td>'+replaceNull(users[i].fullname)+'</td>'
-            +'<td>'+replaceNull(users[i].sex)+'</td>'
-            +'<td>'+replaceNull(users[i].email)+'</td>'
-            +'<td>'+replaceNull(users[i].phone)+'</td>'
             +'<td>'+replaceNull(users[i].createtime)+'</td>'
             +'<td>';
     	tr+='<a href=javascript:void(0) title="点击修改用户" onclick="updateUser('+users[i].id+')"><i class="layui-icon">&#xe642;</i></a>'

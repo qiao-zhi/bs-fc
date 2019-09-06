@@ -90,7 +90,8 @@ layui.use('laydate', function(){
   
   //常规用法
   laydate.render({
-    elem: '#test1'
+    elem: '#test1',
+    value: new Date(new Date()-1000*60*60*24*2)
   });
 });
 </script>

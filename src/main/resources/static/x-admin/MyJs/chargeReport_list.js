@@ -25,34 +25,58 @@ function showUsersTable(pageInfo){
 
     var users = pageInfo.list;
     $("#memberTbody").html("");//清空表格中数据并重新填充数据
+
     for(var i=0,length_1 = users.length;i<length_1;i++){
         var index = (pageNum - 1) * pageSize + i + 1;
         var tr = "<tr>"
             +'<td>'+index+'</td>'
             +'<td>'+replaceNull(users[i].user_name)+'</td>'
-            +'<td>'+replaceNull(users[i].当天)+'</td>'
-            +'<td>'+replaceNull(users[i].第1天)+'</td>'
-            +'<td>'+replaceNull(users[i].第2天)+'</td>'
-            +'<td>'+replaceNull(users[i].第3天)+'</td>'
-            +'<td>'+replaceNull(users[i].第4天)+'</td>'
-            +'<td>'+replaceNull(users[i].第5天)+'</td>'
-            +'<td>'+replaceNull(users[i].第6天)+'</td>'
-            +'<td>'+replaceNull(users[i].第7天)+'</td>'
-            +'<td>'+replaceNull(users[i].第8天)+'</td>'
-            +'<td>'+replaceNull(users[i].第9天)+'</td>'
-            +'<td>'+replaceNull(users[i].第10天)+'</td>'
-            +'<td>'+replaceNull(users[i].第11天)+'</td>'
-            +'<td>'+replaceNull(users[i].第12天)+'</td>'
-            +'<td>'+replaceNull(users[i].第13天)+'</td>'
-            +'<td>'+replaceNull(users[i].第14天)+'</td>'
-            +'<td>'+replaceNull(users[i].第15天)+'</td>';
+            +'<td class="day0">'+replaceNull(users[i].当天)+'</td>'
+            +'<td class="day1">'+replaceNull(users[i].第1天)+'</td>'
+            +'<td class="day2">'+replaceNull(users[i].第2天)+'</td>'
+            +'<td class="day3">'+replaceNull(users[i].第3天)+'</td>'
+            +'<td class="day4">'+replaceNull(users[i].第4天)+'</td>'
+            +'<td class="day5">'+replaceNull(users[i].第5天)+'</td>'
+            +'<td class="day6">'+replaceNull(users[i].第6天)+'</td>'
+            +'<td class="day7">'+replaceNull(users[i].第7天)+'</td>'
+            +'<td class="day8">'+replaceNull(users[i].第8天)+'</td>'
+            +'<td class="day9">'+replaceNull(users[i].第9天)+'</td>'
+            +'<td class="day10">'+replaceNull(users[i].第10天)+'</td>'
+            +'<td class="day11">'+replaceNull(users[i].第11天)+'</td>'
+            +'<td class="day12">'+replaceNull(users[i].第12天)+'</td>'
+            +'<td class="day13">'+replaceNull(users[i].第13天)+'</td>'
+            +'<td class="day14">'+replaceNull(users[i].第14天)+'</td>'
+            +'<td class="day15">'+replaceNull(users[i].第15天)+'</td>';
             
     	tr +='</tr>'
         $("#memberTbody").append(tr);
+    	
+    	if (i == length_1 -1) {
+    		doCalculateTotal(users.length);
+    	}
     }
 
     //开启分页组件
     usersPage(total,pageNum,pageSize);
+}
+
+function doCalculateTotal(total) {
+	var tr = "<tr><td colspan='2'>汇总</td>";
+	
+	var totalRates = [];
+	for (var i = 0; i < 16; i++) {
+		var oneValues = 0;
+		$(".day" + i).each(function() {
+			if ("1" == $(this).text()) {
+				oneValues++;
+			}
+		})
+		
+		tr += "<td>"+ oneValues +"<br/>(" + (oneValues/total).toFixed(4) * 100  +"%)</td>";
+	}
+	
+	tr += "</tr>";
+	$("#memberTbody").append(tr);
 }
 
 /**
@@ -72,7 +96,7 @@ function usersPage(total,pageNum,pageSize){
             count: total, //数据总数，从服务端得到
             limit:pageSize,//每页显示的条数。laypage将会借助 count 和 limit 计算出分页数。
             curr:pageNum,//当前页号
-            limits:[6,10,15,20],
+            limits:[50, 40, 30, 20, 10],
             layout:['limit','prev', 'page', 'next','skip','count'],//显示哪些分页组件
             jump: function(obj, first){//点击页号的时候执行的函数
                 //obj包含了当前分页的所有参数，比如：
