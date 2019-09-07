@@ -32,3 +32,28 @@ function closeNowPage() {
     })
 }
 
+function exportExcel(formId, url) {
+    try {
+        var queryForm = $("#" + formId);
+        var exportForm = $("<form action='" + url + "' method='post'></form>")
+        
+        queryForm.find("input").each(function() {
+            var name = $(this).attr("name");
+            var value = $(this).val();
+            exportForm.append("<input type='hidden' name='" + name + "' value='" + value + "'/>")
+        });
+        
+        queryForm.find("select").each(function() {
+            var name = $(this).attr("name");
+            var value = $(this).val();
+            exportForm.append("<input type='hidden' name='" + name + "' value='" + value + "'/>")
+        });
+        
+        $(document.body).append(exportForm);
+        exportForm.submit();
+    } catch (e) {
+        console.log(e);
+    } finally {
+        exportForm.remove();
+    }
+}

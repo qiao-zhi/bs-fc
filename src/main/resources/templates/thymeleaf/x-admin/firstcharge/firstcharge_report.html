@@ -46,6 +46,8 @@
           <input type="text" name="gmtCreated"  placeholder="请选择首充日期" id="test1" autocomplete="off" class="layui-input"/>
           <button class="layui-btn" type="button" onclick="queryUsersFY()"><i class="layui-icon">&#xe615;</i></button>
           <button class="layui-btn layui-btn-normal" type="button" onclick='clearQueryCondition(this)' title="点击重置查询条件"><i class="layui-icon">&#xe639;</i></button>
+          
+          <button class="layui-btn layui-btn-normal" type="button" onclick="exportExcel('queryUserForm', '/firstcharge/downFirstcharge_report.html')" title="点击下载"><i class="layui-icon">&#xe601;</i></button>
         </form>
       </div>
       
