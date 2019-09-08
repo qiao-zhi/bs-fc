@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -12,13 +13,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
@@ -128,6 +133,10 @@ public class FirstChargeReportController {
 		List<Map<String, Object>> listFirstChargeReport = firstChargeReportService
 				.listFirstChargeReport(resetCondition);
 
+		if (CollectionUtils.isNotEmpty(listFirstChargeReport)) {
+			setCouuntInfo(listFirstChargeReport);
+		}
+
 		// 写入文件中
 		String[] headerNames = new String[] { "会员账号", "当天", "1天", "2天", "3天", "4天", "5天", "6天", "7天", "8天", "9天", "10天",
 				"11天", "12天", "13天", "14天", "15天" };
@@ -156,4 +165,65 @@ public class FirstChargeReportController {
 
 	}
 
+	private void setCouuntInfo(List<Map<String, Object>> listFirstChargeReport) {
+		int length = listFirstChargeReport.size();
+
+		// 插入空行
+		Map<String, Object> empty = new HashMap<>();
+		listFirstChargeReport.add(empty);
+
+		Map<String, Object> countMap = new HashMap<>();
+		countMap.put("user_name", "汇总信息");
+		countMap.put("当天", 0);
+		countMap.put("第1天", 0);
+		countMap.put("第2天", 0);
+		countMap.put("第3天", 0);
+		countMap.put("第4天", 0);
+		countMap.put("第5天", 0);
+		countMap.put("第6天", 0);
+		countMap.put("第7天", 0);
+		countMap.put("第8天", 0);
+		countMap.put("第9天", 0);
+		countMap.put("第10天", 0);
+		countMap.put("第11天", 0);
+		countMap.put("第12天", 0);
+		countMap.put("第13天", 0);
+		countMap.put("第14天", 0);
+		countMap.put("第15天", 0);
+
+		for (Map<String, Object> result : listFirstChargeReport) {
+			Set<Entry<String, Object>> entrySet = result.entrySet();
+
+			for (Entry<String, Object> entry : entrySet) {
+				String key = entry.getKey();
+
+				if (key != null && "user_name".equals(key)) {
+					continue;
+				}
+
+				Object value = entry.getValue();
+				if ("1".equals(value)) {
+					int tmpCount = NumberUtils.toInt(countMap.get(key).toString(), 0);
+					countMap.put(key, ++tmpCount);
+				}
+			}
+		}
+
+		Map<String, Object> result = new HashMap<>();
+		for (Entry<String, Object> entry : countMap.entrySet()) {
+			String key = entry.getKey();
+			Object tmpValue = entry.getValue();
+
+			if ("user_name".equals(key)) {
+				result.put(key, tmpValue);
+				continue;
+			}
+
+			NumberFormat nt = NumberFormat.getPercentInstance();// 获取百分数实例
+			nt.setMinimumFractionDigits(2);
+			String rate = nt.format(Float.valueOf(String.valueOf(tmpValue)) / (float) length);
+			result.put(key, tmpValue + "(" + rate + ")");
+		}
+		listFirstChargeReport.add(result);
+	}
 }

@@ -43,15 +43,7 @@ public class LoginController {
 	@RequestMapping("doLogin")
 	@ResponseBody
 	public JSONResultUtil doLogin(String username, String password, HttpSession session) {
-		User loginUser = null;
-		if ("admin".equals(username) && "admin".equals(password)) {
-			loginUser = new User();
-			loginUser.setFullname("系统管理员");
-			loginUser.setUsername("admin");
-			loginUser.setRoles("1");
-		} else {
-			loginUser = userService.getUserByUserNameAndPassword(username, password);
-		}
+		User loginUser = userService.getUserByUserNameAndPassword(username, password);
 
 		if (loginUser == null) {
 			return JSONResultUtil.error("账号或者密码错误");
