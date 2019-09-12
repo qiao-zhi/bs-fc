@@ -15,7 +15,7 @@ public class CrawJob {
 	@Scheduled(cron = "0 0 23 * * ?")
 	public void cron() {
 		LOGGER.info("开始爬虫");
-		CrawUtils.doCrawData();
+		CrawUtils.doCrawTodayData();
 		LOGGER.info("结束爬虫");
 	}
 }

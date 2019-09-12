@@ -4,14 +4,35 @@
 
 	<select id="listFirstChargeReport" resultType="map"
 		parameterType="map">
-	SELECT user_name,gmt_created, '1' AS 当天
-	<foreach collection="syncDates" item="syncDate" index="indexNum" open="," separator=",">
-		IFNULL((SELECT CASE WHEN bet_amount + 0 > 0 THEN '1' END FROM member m WHERE m.user_name = c.user_name  AND sync_Date = '${syncDate}'),'-') AS 第${indexNum + 1}天
-	</foreach>
-	FROM first_charge c WHERE gmt_created LIKE '${gmtCreated}%' 
-	<if test="user_name != null and user_name != ''">
-		and user_name like '%${user_name}%'
-	</if>
+		SELECT user_name,gmt_created, '1' AS 当天
+		<foreach collection="syncDates" item="syncDate" index="indexNum"
+			open="," separator=",">
+			IFNULL((SELECT CASE WHEN bet_amount + 0 > 0 THEN '1' END FROM member m WHERE
+			m.user_name = c.user_name AND sync_Date = '${syncDate}'),'-') AS
+			第${indexNum + 1}天
+		</foreach>
+		FROM first_charge c WHERE gmt_created LIKE '${gmtCreated}%'
+		<if test="user_name != null and user_name != ''">
+			and user_name like '%${user_name}%'
+		</if>
+	</select>
+
+	<select id="listTotalChargeReport" resultType="map"
+		parameterType="map">
+		Select c.user_name, gmt_created, register_time, ROUND(sum(in_amount), 2) total from first_charge c,member m where m.user_name = c.user_name 
+			<if test="user_name != null and user_name != ''">
+				and c.user_name like '%${user_name}%'
+			</if>
+			<if test="gmt_created != null and gmt_created != ''">
+				 and gmt_created LIKE '${gmt_created}%'
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and m.sync_date >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and m.sync_date &lt;= #{endTime}
+			</if>
+			group by m.user_name order by total desc
 	</select>
 
 </mapper>

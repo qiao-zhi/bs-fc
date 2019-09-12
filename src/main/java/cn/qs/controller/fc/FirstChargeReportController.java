@@ -162,7 +162,6 @@ public class FirstChargeReportController {
 		response.setContentType("multipart/form-data");
 
 		IOUtils.copy(openInputStream, response.getOutputStream());
-
 	}
 
 	private void setCouuntInfo(List<Map<String, Object>> listFirstChargeReport) {

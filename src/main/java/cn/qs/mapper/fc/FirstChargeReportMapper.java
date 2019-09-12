@@ -10,4 +10,6 @@ public interface FirstChargeReportMapper {
 
 	List<Map<String, Object>> listFirstChargeReport(Map<String, Object> condition);
 
+	List<Map<String, Object>> listTotalChargeReport(Map<String, Object> tmpCondition);
+
 }

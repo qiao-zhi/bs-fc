@@ -13,4 +13,12 @@ public interface FirstChargeReportService {
 	 * @return
 	 */
 	List<Map<String, Object>> listFirstChargeReport(Map<String, Object> condition);
+
+	/**
+	 * 组合条件查询累计充值报表
+	 * 
+	 * @param tmpCondition
+	 * @return
+	 */
+	List<Map<String, Object>> listTotalChargeReport(Map<String, Object> tmpCondition);
 }

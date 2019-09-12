@@ -20,4 +20,9 @@ public class FirstChargeReportServiceImpl implements FirstChargeReportService {
 		return firstChargeReportMapper.listFirstChargeReport(condition);
 	}
 
+	@Override
+	public List<Map<String, Object>> listTotalChargeReport(Map<String, Object> tmpCondition) {
+		return firstChargeReportMapper.listTotalChargeReport(tmpCondition);
+	}
+
 }

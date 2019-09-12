@@ -24,6 +24,10 @@ public class Member {
 	private String tipAmount;
 	private String parentId;
 	private String sendAmount;
+
+	/**
+	 * 充值金额
+	 */
 	private String inAmount;
 	private String returnAmount;
 	private String grade;

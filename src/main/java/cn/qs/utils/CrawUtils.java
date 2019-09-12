@@ -10,6 +10,7 @@ import java.util.Map;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.ibatis.scripting.xmltags.IfSqlNode;
 import org.jsoup.Connection;
 import org.jsoup.Connection.Method;
 import org.jsoup.Connection.Response;
@@ -40,9 +41,15 @@ public class CrawUtils {
 
 	private static final String URL_CRAW_FIRST_CHARGE = "http://xfcai.jiuheyikuang.cn/v1/report/firstinReport?sort=0&userName=&parentName=&pageSize=20";
 
+	private static final String URL_CRAW_FIXED_REPORT = "http://xfcai.jiuheyikuang.cn/v1/report/tenantReport?type=1";
+
 	private static Map<String, String> cookies = new HashMap<String, String>();
 
-	public static void doCrawData() {
+	public static void main(String[] args) {
+		doCrawTodayData();
+	}
+
+	public static void doCrawTodayData() {
 		// 不传日期代表爬当天数据
 		doCrawData("", "");
 	}
@@ -53,10 +60,32 @@ public class CrawUtils {
 			throw new RuntimeException("登陆失败");
 		}
 
-		crawMembers(startTime, endTime);
-		crawFirstChatges(startTime, endTime);
+		// crawMembers(startTime, endTime);
+		// crawFirstChatges(startTime, endTime);
+		crawFixedReport(startTime, endTime);
 
 		logout();
+	}
+
+	private static void crawFixedReport(String startTime, String endTime) {
+		startTime = StringUtils.defaultIfBlank(startTime, DateFormatUtils.format(new Date(), "yyyy-MM-dd"));
+		endTime = StringUtils.defaultIfBlank(endTime, DateFormatUtils.format(new Date(), "yyyy-MM-dd"));
+
+		String url = URL_CRAW_FIXED_REPORT + "&startTime=" + startTime + "&endTime=" + endTime;
+
+		String responseInfo = requestURL(url);
+		String bodyInfo = extractContentByTag(responseInfo, "body");
+		if (StringUtils.isBlank(bodyInfo)) {
+			return;
+		}
+
+		HashMap<String, Object> parseObject = JSONObject.parseObject(bodyInfo, HashMap.class);
+
+		batchDisposeFixedReports(MapUtils.getString(parseObject, "data", ""), startTime);
+	}
+
+	private static void batchDisposeFixedReports(String string, String startTime) {
+		System.out.println(string);
 	}
 
 	private static void crawMembers(String startTime, String endTime) {
