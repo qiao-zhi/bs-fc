@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+  
+  <head>
+    <meta charset="UTF-8"/>
+    <title>欢迎页面-X-admin2.0</title>
+    <meta name="renderer" content="webkit"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="shortcut icon" href="/static/x-admin/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" th:href="${#httpServletRequest.getContextPath()+'/static/x-admin/css/font.css'}"/>
+    <link rel="stylesheet" th:href="${#httpServletRequest.getContextPath()+'/static/x-admin/css/xadmin.css'}"/>
+    <script type="text/javascript" th:src="${#httpServletRequest.getContextPath()+'/static/js/jquery.min.js'}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="${#httpServletRequest.getContextPath()+'/static/x-admin/lib/layui/layui.all.js'}" charset="utf-8"></script>
+    <script type="text/javascript" th:src="${#httpServletRequest.getContextPath()+'/static/x-admin/js/xadmin.js'}"></script>
+    
+    <!--自己写的JS  -->
+    <script type="text/javascript" th:src="${#httpServletRequest.getContextPath()+'/static/x-admin/MyJs/PublicFunctions.js'}"></script>
+    <script type="text/javascript" th:src="${#httpServletRequest.getContextPath()+'/static/x-admin/MyJs/chargeReport_list2.js'}"></script>
+    
+    <span th:if="${session.user.username} eq 'admin'">
+    	<script>
+    		var admin = true;
+    	</script>
+    </span>
+	<style>
+		td, th {
+			word-break: keep-all;
+			white-space: nowrap;
+		}
+	</style>    
+  </head>
+  
+  <body class="layui-anim layui-anim-up">
+    <div class="x-nav">
+      <span class="layui-breadcrumb">
+        <a href="">首页</a>
+        <a href="">演示</a>
+        <a>
+          <cite>导航元素</cite></a>
+      </span>
+      <a class="layui-btn layui-btn-small" style="line-height:1.6em;margin-top:3px;float:right" href="javascript:location.replace(location.href);" title="刷新">
+        <i class="layui-icon" style="line-height:30px">ဂ</i></a>
+    </div>
+    <div class="x-body" style="overflow: scroll;">
+      <div class="layui-row">
+        <form class="layui-form layui-col-md12 x-so" id="queryUserForm">
+          <!--隐藏当前页和页号-->
+          <input type="hidden" name="pageNum"/>
+          <input type="hidden" name="pageSize" value="10"/>
+          <input type="text" name="user_name"  placeholder="请输入用户名" autocomplete="off" class="layui-input"/>
+          <input type="text" name="gmtCreated"  placeholder="请选择首充日期" id="test1" autocomplete="off" class="layui-input"/>
+          <button class="layui-btn" type="button" onclick="queryUsersFY()"><i class="layui-icon">&#xe615;</i></button>
+          <button class="layui-btn layui-btn-normal" type="button" onclick='clearQueryCondition(this)' title="点击重置查询条件"><i class="layui-icon">&#xe639;</i></button>
+          
+          <button class="layui-btn layui-btn-normal" type="button" onclick="exportExcel('queryUserForm', '/firstcharge/downFirstcharge_report.html')" title="点击下载"><i class="layui-icon">&#xe601;</i></button>
+        </form>
+      </div>
+      
+      <table class="layui-table">
+        <thead>
+          <tr>
+            <th>序号</th>
+            <th>会员账号</th>
+            <th>当天</th>
+            <th>1天</th>
+            <th>2天</th>
+            <th>3天</th>
+            <th>4天</th>
+            <th>5天</th>
+            <th>6天</th>
+            <th>7天</th>
+            <th>8天</th>
+            <th>9天</th>
+            <th>10天</th>
+            <th>12天</th>
+            <th>12天</th>
+            <th>13天</th>
+            <th>14天</th>
+            <th>15天</th>
+            <th>16天</th>
+            <th>17天</th>
+            <th>18天</th>
+            <th>19天</th>
+            <th>20天</th>
+            <th>21天</th>
+            <th>22天</th>
+            <th>23天</th>
+            <th>24天</th>
+            <th>25天</th>
+            <th>26天</th>
+            <th>27天</th>
+            <th>28天</th>
+            <th>29天</th>
+            <th>30天</th>
+           </tr>
+        </thead>
+        <tbody id="memberTbody">
+        </tbody>
+      </table>
+      
+     <!--分页-->
+        <div id="pageDiv"></div>
+     <!--end 分页-->
+
+    </div>
+  </body>
+</html>
+
+<script>
+layui.use('laydate', function(){
+  var laydate = layui.laydate;
+  
+  //常规用法
+  laydate.render({
+    elem: '#test1',
+    value: new Date(new Date()-1000*60*60*24*2)
+  });
+});
+</script>

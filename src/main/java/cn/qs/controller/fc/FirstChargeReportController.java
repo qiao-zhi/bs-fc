@@ -58,6 +58,11 @@ public class FirstChargeReportController {
 		return "firstcharge/firstcharge_report";
 	}
 
+	@RequestMapping("/firstcharge_report2")
+	public String firstcharge_report2() {
+		return "firstcharge/firstcharge_report2";
+	}
+
 	@RequestMapping("pageFirstChargeReport")
 	@ResponseBody
 	public PageInfo<Map<String, Object>> pageFirstChargeReport(@RequestParam Map condition) {
@@ -70,7 +75,7 @@ public class FirstChargeReportController {
 			pageSize = MapUtils.getInteger(condition, "pageSize");
 		}
 
-		Map<String, Object> tmpCondition = resetCondition(condition);
+		Map<String, Object> tmpCondition = resetCondition(condition, 15, false);
 		logger.debug("tmpCondition - > {}", tmpCondition);
 
 		// 开始分页
@@ -81,7 +86,30 @@ public class FirstChargeReportController {
 		return pageInfo;
 	}
 
-	private Map<String, Object> resetCondition(Map condition) {
+	@RequestMapping("pageFirstChargeReport2")
+	@ResponseBody
+	public PageInfo<Map<String, Object>> pageFirstChargeReport2(@RequestParam Map condition) {
+		int pageNum = 1;
+		if (ValidateCheck.isNotNull(MapUtils.getString(condition, "pageNum"))) { // 如果不为空的话改变当前页号
+			pageNum = MapUtils.getInteger(condition, "pageNum");
+		}
+		int pageSize = 50;
+		if (ValidateCheck.isNotNull(MapUtils.getString(condition, "pageSize"))) { // 如果不为空的话改变当前页大小
+			pageSize = MapUtils.getInteger(condition, "pageSize");
+		}
+
+		Map<String, Object> tmpCondition = resetCondition(condition, 30, true);
+		logger.debug("tmpCondition - > {}", tmpCondition);
+
+		// 开始分页
+		PageHelper.startPage(pageNum, pageSize);
+		List<Map<String, Object>> listFirstChargeReport = firstChargeReportService.listFirstChargeReport2(tmpCondition);
+		PageInfo<Map<String, Object>> pageInfo = new PageInfo<Map<String, Object>>(listFirstChargeReport);
+
+		return pageInfo;
+	}
+
+	private Map<String, Object> resetCondition(Map condition, int days, boolean addFirstDay) {
 		String gmtCreated = "";
 		if (condition == null || !condition.containsKey("gmtCreated")) {
 			gmtCreated = DateFormatUtils.format(new Date(), "yyyy-MM-dd");
@@ -91,7 +119,7 @@ public class FirstChargeReportController {
 
 		Map<String, Object> tmpCondition = new HashMap<>();
 		tmpCondition.put("gmtCreated", gmtCreated);
-		List<String> syncDates = getDates(gmtCreated, 15);
+		List<String> syncDates = getDates(gmtCreated, days, addFirstDay);
 		tmpCondition.put("syncDates", syncDates);
 
 		if (MapUtils.isNotEmpty(condition)) {
@@ -101,8 +129,11 @@ public class FirstChargeReportController {
 		return tmpCondition;
 	}
 
-	private List<String> getDates(String dateStr, int i) {
+	private List<String> getDates(String dateStr, int i, boolean addFirstDay) {
 		List<String> result = new ArrayList<>();
+		if (addFirstDay) {
+			result.add(dateStr);
+		}
 
 		try {
 			Date parseDate = DateUtils.parseDate(dateStr, "yyyy-MM-dd");
@@ -129,7 +160,7 @@ public class FirstChargeReportController {
 			@RequestParam Map condition) throws IOException {
 
 		// 查数据
-		Map<String, Object> resetCondition = resetCondition(condition);
+		Map<String, Object> resetCondition = resetCondition(condition, 15, false);
 		List<Map<String, Object>> listFirstChargeReport = firstChargeReportService
 				.listFirstChargeReport(resetCondition);
 

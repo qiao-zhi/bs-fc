@@ -21,4 +21,12 @@ public interface FirstChargeReportService {
 	 * @return
 	 */
 	List<Map<String, Object>> listTotalChargeReport(Map<String, Object> tmpCondition);
+
+	/**
+	 * 高级版留存查询
+	 * 
+	 * @param tmpCondition
+	 * @return
+	 */
+	List<Map<String, Object>> listFirstChargeReport2(Map<String, Object> tmpCondition);
 }

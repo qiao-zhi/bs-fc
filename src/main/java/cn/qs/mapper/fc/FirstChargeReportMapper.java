@@ -12,4 +12,6 @@ public interface FirstChargeReportMapper {
 
 	List<Map<String, Object>> listTotalChargeReport(Map<String, Object> tmpCondition);
 
+	List<Map<String, Object>> listFirstChargeReport2(Map<String, Object> tmpCondition);
+
 }
