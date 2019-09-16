@@ -10,7 +10,6 @@ import java.util.Map;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.ibatis.scripting.xmltags.IfSqlNode;
 import org.jsoup.Connection;
 import org.jsoup.Connection.Method;
 import org.jsoup.Connection.Response;
@@ -25,8 +24,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 
 import cn.qs.bean.fc.FirstCharge;
+import cn.qs.bean.fc.FixedReport;
 import cn.qs.bean.fc.Member;
 import cn.qs.service.fc.FirstChargeService;
+import cn.qs.service.fc.FixedReportService;
 import cn.qs.service.fc.MemberService;
 
 public class CrawUtils {
@@ -60,8 +61,8 @@ public class CrawUtils {
 			throw new RuntimeException("登陆失败");
 		}
 
-		// crawMembers(startTime, endTime);
-		// crawFirstChatges(startTime, endTime);
+		crawMembers(startTime, endTime);
+		crawFirstChatges(startTime, endTime);
 		crawFixedReport(startTime, endTime);
 
 		logout();
@@ -84,8 +85,22 @@ public class CrawUtils {
 		batchDisposeFixedReports(MapUtils.getString(parseObject, "data", ""), startTime);
 	}
 
-	private static void batchDisposeFixedReports(String string, String startTime) {
-		System.out.println(string);
+	private static void batchDisposeFixedReports(String data, String syncDate) {
+		if (StringUtils.isBlank(data)) {
+			return;
+		}
+
+		FixedReportService fixedReportService = SpringBootUtils.getBean(FixedReportService.class);
+		FixedReport findBySyncDate = fixedReportService.findBySyncDate(syncDate);
+
+		FixedReport fixedReport = JSONObject.parseObject(data, FixedReport.class);
+		fixedReport.setSyncDate(syncDate);
+		if (findBySyncDate != null && findBySyncDate.getSyncDate() != null) {
+			fixedReport.setId(findBySyncDate.getId());
+			fixedReportService.update(fixedReport);
+		} else {
+			fixedReportService.add(fixedReport);
+		}
 	}
 
 	private static void crawMembers(String startTime, String endTime) {

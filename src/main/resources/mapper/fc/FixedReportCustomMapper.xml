@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.qs.mapper.fc.custom.FixedReportCustomMapper">
+
+	<select id="listByCondition" resultType="map"
+		parameterType="map">
+		select * from fixed_report
+		<where>
+			<if test="startTime != null and startTime != ''">
+				and sync_date >= #{startTime}
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and sync_date &lt;= #{endTime}
+			</if>
+		</where>
+		order by sync_date desc
+	</select>
+
+</mapper>

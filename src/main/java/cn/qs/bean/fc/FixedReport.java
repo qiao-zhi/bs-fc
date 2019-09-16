@@ -67,6 +67,11 @@ public class FixedReport {
 	 */
 	private String betCountAll;
 
+	/**
+	 * 同步日期(标记同步的是哪一天的数据)
+	 */
+	private String syncDate;
+
 	public Integer getId() {
 		return id;
 	}
@@ -161,6 +166,23 @@ public class FixedReport {
 
 	public void setBetCountAll(String betCountAll) {
 		this.betCountAll = betCountAll;
+	}
+
+	public String getSyncDate() {
+		return syncDate;
+	}
+
+	public void setSyncDate(String syncDate) {
+		this.syncDate = syncDate;
+	}
+
+	@Override
+	public String toString() {
+		return "FixedReport [id=" + id + ", registerCount=" + registerCount + ", firstinCount=" + firstinCount
+				+ ", inAmount=" + inAmount + ", inCount=" + inCount + ", returnAmount=" + returnAmount
+				+ ", returnCount=" + returnCount + ", betCount=" + betCount + ", betAmount=" + betAmount + ", profit="
+				+ profit + ", profitability=" + profitability + ", betCountAll=" + betCountAll + ", syncDate="
+				+ syncDate + "]";
 	}
 
 }
