@@ -5,6 +5,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.hibernate.annotations.Index;
+
 @Entity
 public class Member {
 
@@ -12,10 +14,12 @@ public class Member {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
 
+	@Index(name = "memberUserId") // 该注解来自Hibernate包
 	private String userId; // 会员ID
 
 	private String profit;
 	private String betAmount;
+	@Index(name = "memberBetCount") // 该注解来自Hibernate包
 	private String betCount;
 	private String hbGetAmount;
 	private String inCount;
@@ -44,6 +48,7 @@ public class Member {
 	/**
 	 * 同步日期(标记同步的是哪一天的数据)
 	 */
+	@Index(name = "memberSyncDate") // 该注解来自Hibernate包
 	private String syncDate;
 
 	public String getProfit() {

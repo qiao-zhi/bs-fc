@@ -5,6 +5,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import org.hibernate.annotations.Index;
+
 @Entity
 public class FirstCharge {
 
@@ -15,6 +17,7 @@ public class FirstCharge {
 	/**
 	 * userId
 	 */
+	@Index(name = "firstChargeUserId") // 该注解来自Hibernate包
 	private String userId;
 
 	private String amount;
@@ -23,6 +26,7 @@ public class FirstCharge {
 	/**
 	 * 充值时间
 	 */
+	@Index(name = "firstChargeGmtCreated") // 该注解来自Hibernate包
 	private String gmtCreated;
 
 	/**
@@ -37,6 +41,7 @@ public class FirstCharge {
 	/**
 	 * 会员账号
 	 */
+	@Index(name = "firstChargeUserName") // 该注解来自Hibernate包
 	private String userName;
 
 	/**
