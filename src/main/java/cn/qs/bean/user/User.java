@@ -31,6 +31,9 @@ public class User {
 
 	private String roles;
 
+	/**
+	 * 用于权限(可以查看的代理账号)
+	 */
 	private String userblank;
 
 	public Integer getId() {

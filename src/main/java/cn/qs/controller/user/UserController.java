@@ -1,6 +1,7 @@
 package cn.qs.controller.user;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,8 +23,8 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
 import cn.qs.bean.user.User;
+import cn.qs.service.fc.FirstChargeReportService;
 import cn.qs.service.user.UserService;
-import cn.qs.utils.CrawUtils;
 import cn.qs.utils.DefaultValue;
 import cn.qs.utils.JSONResultUtil;
 import cn.qs.utils.MD5Util;
@@ -36,6 +38,9 @@ public class UserController {
 
 	@Autowired
 	private UserService userService;
+
+	@Autowired
+	private FirstChargeReportService firstChargeReportService;
 
 	@RequestMapping("/user-list")
 	public String member_list() {
@@ -113,6 +118,21 @@ public class UserController {
 
 		User user = userService.getUser(id);
 		map.addAttribute("user", user);
+
+		// 管理员修改用户显示可以查看的代理号
+		if ("admin".equals(from)) {
+			List<String> parentNames = firstChargeReportService.listDistinctParentName();
+			map.addAttribute("from", from);
+			map.addAttribute("parentNames", parentNames);
+
+			List<String> parentNamesSeted = new ArrayList<>();
+			String userblank = user.getUserblank();
+			if (StringUtils.isNotBlank(userblank)) {
+				parentNamesSeted = Arrays.asList(userblank.split(","));
+			}
+			map.addAttribute("parentNamesSeted", parentNamesSeted);
+		}
+
 		return "user/updateUser";
 	}
 

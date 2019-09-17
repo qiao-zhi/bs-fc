@@ -30,4 +30,9 @@ public class FirstChargeReportServiceImpl implements FirstChargeReportService {
 		return firstChargeReportMapper.listFirstChargeReport2(tmpCondition);
 	}
 
+	@Override
+	public List<String> listDistinctParentName() {
+		return firstChargeReportMapper.listDistinctParentName();
+	}
+
 }

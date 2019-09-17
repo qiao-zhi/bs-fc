@@ -12,7 +12,6 @@ import org.apache.commons.lang3.time.DateFormatUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import cn.qs.bean.fc.Member;
 import cn.qs.bean.user.User;
 import cn.qs.service.user.UserService;
 import cn.qs.utils.CrawUtils;
@@ -37,7 +36,7 @@ public class StartApplicationListener implements ServletContextListener {
 
 				doCreateAdmin();
 
-				// doCrawDatas();
+				doCrawDatas();
 			}
 
 			private void doCrawDatas() {

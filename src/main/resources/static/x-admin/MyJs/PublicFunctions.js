@@ -52,6 +52,35 @@ var NumberUtils = {
 	}
 };
 
+function serializeCheckboxValuesByName(name, spliter) {
+	if (!spliter) {
+		spliter = ",";
+	}
+	
+	return getSerializeCheckboxValues("[name='"+name+"']:checked", spliter);
+}
+
+function serializeCheckboxValuesByClass(clazz, spliter) {
+	if (!spliter) {
+		spliter = ",";
+	}
+	
+	return getSerializeCheckboxValues("." + clazz + ":checked", spliter);
+}
+
+function getSerializeCheckboxValues(selector, spliter) {
+	var values = [];
+	$(selector).each(function() {
+		values.push($(this).val());
+	});
+	
+	if (values.length > 0) {
+		return values.join(spliter);
+	}
+	
+	return "";
+}
+
 /**
  * 关闭当前页的函数
  */

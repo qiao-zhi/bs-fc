@@ -13,6 +13,8 @@
     <script type="text/javascript" th:src="${#httpServletRequest.getContextPath()+'/static/js/jquery.min.js'}" charset="utf-8"></script>
     <script type="text/javascript" th:src="${#httpServletRequest.getContextPath()+'/static/x-admin/lib/layui/layui.js'}" charset="utf-8"></script>
     <script type="text/javascript" th:src="${#httpServletRequest.getContextPath()+'/static/x-admin/js/xadmin.js'}"></script>
+    
+        <script type="text/javascript" th:src="${#httpServletRequest.getContextPath()+'/static/x-admin/MyJs/PublicFunctions.js'}"></script>
     <!-- 让IE8/9支持媒体查询，从而兼容栅格 -->
     <!--[if lt IE 9]>
       <script src="https://cdn.staticfile.org/html5shiv/r29/html5.min.js"></script>
@@ -20,6 +22,12 @@
     <![endif]-->
   </head>
   
+      <span th:if="${from} == 'admin'">
+    	<script>
+    		var from = 'admin';
+    	</script>
+    </span>
+    
   <body>
     <div class="x-body layui-anim layui-anim-up">
         <form class="layui-form">
@@ -56,6 +64,18 @@
                   autocomplete="off" class="layui-input"/>
               </div>
           </div>
+          <div class="layui-form-item" th:if="${from} == 'admin'">
+              <label for="L_username" class="layui-form-label">
+                  	权限
+              </label>
+             
+              	 <input type ="checkbox" name="userblank"
+			         th:each ="parentName : ${parentNames}"
+			         th:value="${parentName}"
+			         th:text ="${parentName}"
+			         th:attr ="checked=${parentNamesSeted.contains(parentName)?true:false}"
+			         />
+          </div>
           <div class="layui-form-item">
               <label for="L_repass" class="layui-form-label">
               </label>
@@ -76,9 +96,14 @@
             $ = layui.jquery;
           var form = layui.form
           ,layer = layui.layer;
+          
+    	  form.render();
         
           //监听提交
           form.on('submit(add)', function(data){
+        	  if("undefined" != typeof from){
+	        	  data.field.userblank = serializeCheckboxValuesByName("userblank");
+        	  }
        	    //异步提交数据
        	    $.post("/user/doUpdateUser.html",data.field,function(response){
        	    	if(response.success == true){

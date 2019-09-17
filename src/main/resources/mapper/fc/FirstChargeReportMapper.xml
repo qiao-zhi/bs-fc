@@ -37,7 +37,11 @@
 			<if test="endTime != null and endTime != ''">
 				and c.gmt_created &lt;= '${endTime} 23:59:59'
 			</if>
-		
+			
+			<foreach collection="parentNames" item="parentName" index="indexNum"
+			open="and parent_name in (" separator="," close=")">
+			'${parentName}'
+			</foreach>
 		</where>
 	</select>
 
@@ -57,6 +61,11 @@
 				and m.sync_date &lt;= #{endTime}
 			</if>
 			group by m.user_name order by total desc
+	</select>
+	
+	<select id="listDistinctParentName" resultType="string"
+		parameterType="map">
+		select distinct parent_name from first_charge
 	</select>
 
 </mapper>

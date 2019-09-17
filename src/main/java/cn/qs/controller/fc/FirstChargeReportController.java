@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.text.NumberFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -32,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -39,10 +41,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
+import cn.qs.bean.user.User;
 import cn.qs.service.fc.FirstChargeReportService;
 import cn.qs.utils.ExcelExporter;
-import cn.qs.utils.FCNumberUtils;
 import cn.qs.utils.ExcelExporter.OfficeVersion;
+import cn.qs.utils.FCNumberUtils;
 import cn.qs.utils.SystemUtils;
 import cn.qs.utils.ValidateCheck;
 import cn.qs.utils.WebUtils;
@@ -62,13 +65,27 @@ public class FirstChargeReportController {
 	}
 
 	@RequestMapping("/firstcharge_report2")
-	public String firstcharge_report2() {
+	public String firstcharge_report2(ModelMap map, HttpServletRequest request) {
+		User loginUser = SystemUtils.getLoginUser(request);
+
+		List<String> parentNames = new ArrayList<>();
+		String userblank = loginUser.getUserblank();
+		if (StringUtils.isNotBlank(userblank)) {
+			parentNames = Arrays.asList(userblank.split(","));
+		} else {
+			parentNames = firstChargeReportService.listDistinctParentName();
+
+		}
+		map.addAttribute("parentNames", parentNames);
+
 		return "firstcharge/firstcharge_report2";
 	}
 
 	@RequestMapping("pageFirstChargeReport")
 	@ResponseBody
-	public PageInfo<Map<String, Object>> pageFirstChargeReport(@RequestParam Map condition) {
+	public PageInfo<Map<String, Object>> pageFirstChargeReport(@RequestParam Map condition,
+			HttpServletRequest request) {
+
 		int pageNum = 1;
 		if (ValidateCheck.isNotNull(MapUtils.getString(condition, "pageNum"))) { // 如果不为空的话改变当前页号
 			pageNum = MapUtils.getInteger(condition, "pageNum");
@@ -78,7 +95,7 @@ public class FirstChargeReportController {
 			pageSize = MapUtils.getInteger(condition, "pageSize");
 		}
 
-		Map<String, Object> tmpCondition = resetCondition(condition, 15, false);
+		Map<String, Object> tmpCondition = resetCondition(condition, 15, false, request);
 		logger.debug("tmpCondition - > {}", tmpCondition);
 
 		// 开始分页
@@ -91,7 +108,9 @@ public class FirstChargeReportController {
 
 	@RequestMapping("pageFirstChargeReport2")
 	@ResponseBody
-	public PageInfo<Map<String, Object>> pageFirstChargeReport2(@RequestParam Map condition) {
+	public PageInfo<Map<String, Object>> pageFirstChargeReport2(@RequestParam Map condition,
+			HttpServletRequest request) {
+
 		int pageNum = 1;
 		if (ValidateCheck.isNotNull(MapUtils.getString(condition, "pageNum"))) { // 如果不为空的话改变当前页号
 			pageNum = MapUtils.getInteger(condition, "pageNum");
@@ -101,7 +120,7 @@ public class FirstChargeReportController {
 			pageSize = MapUtils.getInteger(condition, "pageSize");
 		}
 
-		Map<String, Object> tmpCondition = resetCondition(condition, 30, true);
+		Map<String, Object> tmpCondition = resetCondition(condition, 30, true, request);
 		logger.debug("tmpCondition - > {}", tmpCondition);
 
 		// 开始分页
@@ -112,7 +131,9 @@ public class FirstChargeReportController {
 		return pageInfo;
 	}
 
-	private Map<String, Object> resetCondition(Map condition, int days, boolean addFirstDay) {
+	private Map<String, Object> resetCondition(Map condition, int days, boolean addFirstDay,
+			HttpServletRequest request) {
+
 		String gmtCreated = "";
 		if (condition == null || !condition.containsKey("gmtCreated")) {
 			gmtCreated = DateFormatUtils.format(new Date(), "yyyy-MM-dd");
@@ -122,8 +143,23 @@ public class FirstChargeReportController {
 
 		Map<String, Object> tmpCondition = new HashMap<>();
 		tmpCondition.put("gmtCreated", gmtCreated);
+
 		List<String> syncDates = getDates(gmtCreated, days, addFirstDay);
 		tmpCondition.put("syncDates", syncDates);
+
+		List<String> parentNames = new ArrayList<>();
+		if (condition.containsKey("parentName") && StringUtils.isNotBlank((String) condition.get("parentName"))) {
+			parentNames.add((String) condition.get("parentName"));
+		} else {
+			User loginUser = SystemUtils.getLoginUser(request);
+			String userblank = loginUser.getUserblank();
+			if (StringUtils.isNotBlank(userblank)) {
+				parentNames = Arrays.asList(userblank.split(","));
+			} else {
+				parentNames = firstChargeReportService.listDistinctParentName();
+			}
+		}
+		tmpCondition.put("parentNames", parentNames);
 
 		if (MapUtils.isNotEmpty(condition)) {
 			tmpCondition.putAll(condition);
@@ -163,7 +199,7 @@ public class FirstChargeReportController {
 			@RequestParam Map condition) throws IOException {
 
 		// 查数据
-		Map<String, Object> resetCondition = resetCondition(condition, 15, false);
+		Map<String, Object> resetCondition = resetCondition(condition, 15, false, request);
 		List<Map<String, Object>> listFirstChargeReport = firstChargeReportService
 				.listFirstChargeReport(resetCondition);
 
@@ -203,7 +239,7 @@ public class FirstChargeReportController {
 			@RequestParam Map condition) throws IOException {
 
 		// 查数据
-		Map<String, Object> resetCondition = resetCondition(condition, 30, true);
+		Map<String, Object> resetCondition = resetCondition(condition, 30, true, request);
 		List<Map<String, Object>> listFirstChargeReport = firstChargeReportService
 				.listFirstChargeReport2(resetCondition);
 

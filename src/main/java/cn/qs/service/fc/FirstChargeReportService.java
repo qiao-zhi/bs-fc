@@ -29,4 +29,6 @@ public interface FirstChargeReportService {
 	 * @return
 	 */
 	List<Map<String, Object>> listFirstChargeReport2(Map<String, Object> tmpCondition);
+
+	List<String> listDistinctParentName();
 }
