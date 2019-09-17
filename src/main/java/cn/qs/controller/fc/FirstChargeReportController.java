@@ -24,6 +24,7 @@ import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -265,7 +266,14 @@ public class FirstChargeReportController {
 			for (Entry<String, Object> entry : entrySet) {
 				String key = entry.getKey();
 
-				if (key != null && ("user_name".equals(key) || "gmt_created".equals(key))) {
+				if ("user_name".equals(key)) {
+					continue;
+				}
+
+				if ("gmt_created".equals(key)) {
+					if (StringUtils.isNotBlank((String) entry.getValue())) {
+						result.put(key, entry.getValue().toString().substring(0, 10));
+					}
 					continue;
 				}
 
