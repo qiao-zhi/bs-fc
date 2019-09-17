@@ -282,19 +282,15 @@ public class FirstChargeReportController {
 		}
 
 		// 处理汇总行
-		for (Entry<String, Object> entry : countMap.entrySet()) {
-			String key = entry.getKey();
+		for (int i = 0; i <= 30; i++) {
+			String key = "第" + i + "天";
+			String rateKey = "第" + i + "天rate";
+			Object value = countMap.get(key);
+			Integer rateValue = MapUtils.getInteger(countMap, rateKey);
 
-			if (key != null && ("user_name".equals(key) || "gmt_created".equals(key))) {
-				continue;
-			}
-
-			Object value = entry.getValue();
-			if (!"-".equals(value)) {
-				double doubleValue = NumberUtils.toDouble(value.toString());
-				
-				countMap.put(key + "rate", MapUtils.getInteger(countMap, key + "rate", 0) + 1);
-			}
+			String result = rateValue + "(" + FCNumberUtils.toFixedDecimalWithPercent((double) rateValue / length, 2)
+					+ value + ")";
+			countMap.put(key, result);
 		}
 
 		listFirstChargeReport.add(countMap);

@@ -23,7 +23,7 @@ public class FCNumberUtils {
 		return toFixedDecimalWithPercent(NumberUtils.createNumber(value), scale);
 	}
 
-	private static String toFixedDecimalWithPercent(Number value, int scale) {
+	public static String toFixedDecimalWithPercent(Number value, int scale) {
 		NumberFormat numberFormat = NumberFormat.getPercentInstance();
 		numberFormat.setRoundingMode(RoundingMode.HALF_UP);
 		numberFormat.setMaximumFractionDigits(scale);
