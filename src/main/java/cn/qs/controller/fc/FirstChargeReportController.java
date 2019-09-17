@@ -23,6 +23,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -39,6 +40,7 @@ import com.github.pagehelper.PageInfo;
 
 import cn.qs.service.fc.FirstChargeReportService;
 import cn.qs.utils.ExcelExporter;
+import cn.qs.utils.FCNumberUtils;
 import cn.qs.utils.ExcelExporter.OfficeVersion;
 import cn.qs.utils.SystemUtils;
 import cn.qs.utils.ValidateCheck;
@@ -193,6 +195,109 @@ public class FirstChargeReportController {
 		response.setContentType("multipart/form-data");
 
 		IOUtils.copy(openInputStream, response.getOutputStream());
+	}
+
+	@RequestMapping("/downFirstcharge_report2")
+	public void downFirstcharge_report2(HttpServletRequest request, HttpServletResponse response,
+			@RequestParam Map condition) throws IOException {
+
+		// 查数据
+		Map<String, Object> resetCondition = resetCondition(condition, 30, true);
+		List<Map<String, Object>> listFirstChargeReport = firstChargeReportService
+				.listFirstChargeReport2(resetCondition);
+
+		if (CollectionUtils.isNotEmpty(listFirstChargeReport)) {
+			setCouuntInfo2(listFirstChargeReport);
+		}
+
+		// 写入文件中
+		String[] headerNames = new String[] { "会员账号", "首充日期", "当天" };
+		String[] keys = new String[] { "user_name", "gmt_created", "第0天" };
+
+		for (int i = 0; i < 30; i++) {
+			headerNames = ArrayUtils.add(headerNames, (i + 1) + "天");
+			keys = ArrayUtils.add(keys, "第" + (i + 1) + "天");
+		}
+
+		ExcelExporter hssfWorkExcel = new ExcelExporter(headerNames, "留存查询", OfficeVersion.OFFICE_03);
+		hssfWorkExcel.createTableRows(listFirstChargeReport, keys);
+
+		File tmpFile = SystemUtils.getTmpFile();
+		try {
+			hssfWorkExcel.exportExcel(new FileOutputStream(tmpFile));
+		} catch (FileNotFoundException ignore) {
+			// ignore
+		}
+
+		// 获取输入流
+		FileInputStream openInputStream = FileUtils.openInputStream(tmpFile);
+
+		String fileName = WebUtils.getFileName("留存查询", "xls");
+		response.addHeader("Content-Disposition", "attachment;filename=" + fileName);
+		// 1.设置文件ContentType类型，这样设置，会自动判断下载文件类型
+		response.setContentType("multipart/form-data");
+
+		IOUtils.copy(openInputStream, response.getOutputStream());
+	}
+
+	private void setCouuntInfo2(List<Map<String, Object>> listFirstChargeReport) {
+		int length = listFirstChargeReport.size();
+
+		// 插入空行
+		Map<String, Object> empty = new HashMap<>();
+		listFirstChargeReport.add(empty);
+
+		// 创建最后一行汇总行
+		Map<String, Object> countMap = new HashMap<>();
+		countMap.put("user_name", "汇总信息");
+		countMap.put("gmt_created", "");
+		countMap.put("第0天", 0);
+		for (int i = 0; i < 30; i++) {
+			// 总值
+			countMap.put("第" + (i + 1) + "天", 0);
+			// 标记多少个1
+			countMap.put("第" + (i + 1) + "天rate", 0);
+		}
+
+		for (Map<String, Object> result : listFirstChargeReport) {
+			Set<Entry<String, Object>> entrySet = result.entrySet();
+
+			for (Entry<String, Object> entry : entrySet) {
+				String key = entry.getKey();
+
+				if (key != null && ("user_name".equals(key) || "gmt_created".equals(key))) {
+					continue;
+				}
+
+				Object value = entry.getValue();
+				if (!"-".equals(value)) {
+					double doubleValue = NumberUtils.toDouble(value.toString());
+					result.put(key, "1" + " / " + FCNumberUtils.toFixedDecimal(doubleValue, 2));
+
+					countMap.put(key,
+							FCNumberUtils.toFixedDecimal(doubleValue + MapUtils.getDoubleValue(countMap, key, 0D), 2));
+					countMap.put(key + "rate", MapUtils.getInteger(countMap, key + "rate", 0) + 1);
+				}
+			}
+		}
+
+		// 处理汇总行
+		for (Entry<String, Object> entry : countMap.entrySet()) {
+			String key = entry.getKey();
+
+			if (key != null && ("user_name".equals(key) || "gmt_created".equals(key))) {
+				continue;
+			}
+
+			Object value = entry.getValue();
+			if (!"-".equals(value)) {
+				double doubleValue = NumberUtils.toDouble(value.toString());
+				
+				countMap.put(key + "rate", MapUtils.getInteger(countMap, key + "rate", 0) + 1);
+			}
+		}
+
+		listFirstChargeReport.add(countMap);
 	}
 
 	private void setCouuntInfo(List<Map<String, Object>> listFirstChargeReport) {

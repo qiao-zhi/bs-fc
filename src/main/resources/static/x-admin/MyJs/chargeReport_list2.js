@@ -39,6 +39,7 @@ function showUsersTable(pageInfo){
         var tr = "<tr>"
             +'<td>'+index+'</td>'
             +'<td>'+replaceNull(users[i].user_name)+'</td>'
+            +'<td>'+replaceNull(users[i].gmt_created, 10)+'</td>'
             +'<td class="day0">'+reDisposeResult(users[i].第0天)+'</td>'
             +'<td class="day1">'+reDisposeResult(users[i].第1天)+'</td>'
             +'<td class="day2">'+reDisposeResult(users[i].第2天)+'</td>'
@@ -84,7 +85,7 @@ function showUsersTable(pageInfo){
 }
 
 function doCalculateTotal(total) {
-	var tr = "<tr><td colspan='2'>汇总</td>";
+	var tr = "<tr><td colspan='3'>汇总</td>";
 	
 	var totalRates = [];
 	for (var i = 0; i < 31; i++) {

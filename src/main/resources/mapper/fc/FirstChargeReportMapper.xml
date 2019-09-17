@@ -23,13 +23,22 @@
 		<foreach collection="syncDates" item="syncDate" index="indexNum"
 			open="," separator=",">
 			IFNULL((SELECT CASE WHEN bet_amount + 0 > 0 THEN bet_amount END FROM member m WHERE
-			m.user_name = c.user_name AND sync_Date = '${syncDate}'),'-') AS
+			m.user_name = c.user_name AND sync_Date = left(date_add(gmt_created, interval ${indexNum} day), 10)),'-') AS
 			第${indexNum}天
 		</foreach>
-		FROM first_charge c WHERE gmt_created LIKE '${gmtCreated}%'
-		<if test="user_name != null and user_name != ''">
-			and user_name like '%${user_name}%'
-		</if>
+		FROM first_charge c  
+		<where>
+			<if test="user_name != null and user_name != ''">
+				and user_name like '%${user_name}%'
+			</if>
+			<if test="startTime != null and startTime != ''">
+				and c.gmt_created >= '${startTime} 00:00:00'
+			</if>
+			<if test="endTime != null and endTime != ''">
+				and c.gmt_created &lt;= '${endTime} 23:59:59'
+			</if>
+		
+		</where>
 	</select>
 
 	<select id="listTotalChargeReport" resultType="map"
