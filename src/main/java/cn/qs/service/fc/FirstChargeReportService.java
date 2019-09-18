@@ -3,6 +3,8 @@ package cn.qs.service.fc;
 import java.util.List;
 import java.util.Map;
 
+import cn.qs.bean.fc.FirstCharge;
+
 public interface FirstChargeReportService {
 
 	/**
@@ -31,4 +33,6 @@ public interface FirstChargeReportService {
 	List<Map<String, Object>> listFirstChargeReport2(Map<String, Object> tmpCondition);
 
 	List<String> listDistinctParentName();
+
+	void update(FirstCharge firstCharge);
 }

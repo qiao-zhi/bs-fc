@@ -19,7 +19,7 @@
 	
 	<select id="listFirstChargeReport2" resultType="map"
 		parameterType="map">
-		SELECT user_name,gmt_created
+		SELECT id,user_name,gmt_created,parent_name,second_parent_name
 		<foreach collection="syncDates" item="syncDate" index="indexNum"
 			open="," separator=",">
 			IFNULL((SELECT CASE WHEN bet_amount + 0 > 0 THEN bet_amount END FROM member m WHERE

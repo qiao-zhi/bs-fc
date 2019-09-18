@@ -59,6 +59,11 @@ public class FirstCharge {
 	 */
 	private String parentName;
 
+	/**
+	 * 子账号
+	 */
+	private String secondParentName;
+
 	public String getAmount() {
 		return amount;
 	}
@@ -153,6 +158,14 @@ public class FirstCharge {
 
 	public void setId(Integer id) {
 		this.id = id;
+	}
+
+	public String getSecondParentName() {
+		return secondParentName;
+	}
+
+	public void setSecondParentName(String secondParentName) {
+		this.secondParentName = secondParentName;
 	}
 
 }

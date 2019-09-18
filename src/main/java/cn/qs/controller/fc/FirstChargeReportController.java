@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
+import cn.qs.bean.fc.FirstCharge;
 import cn.qs.bean.user.User;
 import cn.qs.service.fc.FirstChargeReportService;
 import cn.qs.utils.ExcelExporter;
@@ -62,6 +63,13 @@ public class FirstChargeReportController {
 	@RequestMapping("/firstcharge_report")
 	public String firstcharge_report() {
 		return "firstcharge/firstcharge_report";
+	}
+
+	@RequestMapping("/update")
+	@ResponseBody
+	public String update(FirstCharge firstCharge) {
+		firstChargeReportService.update(firstCharge);
+		return "ok";
 	}
 
 	@RequestMapping("/firstcharge_report2")
@@ -248,8 +256,8 @@ public class FirstChargeReportController {
 		}
 
 		// 写入文件中
-		String[] headerNames = new String[] { "会员账号", "首充日期", "当天" };
-		String[] keys = new String[] { "user_name", "gmt_created", "第0天" };
+		String[] headerNames = new String[] { "会员账号", "子账号", "上级", "首充日期", "当天" };
+		String[] keys = new String[] { "user_name", "second_parent_name", "parent_name", "gmt_created", "第0天" };
 
 		for (int i = 0; i < 30; i++) {
 			headerNames = ArrayUtils.add(headerNames, (i + 1) + "天");
@@ -302,7 +310,7 @@ public class FirstChargeReportController {
 			for (Entry<String, Object> entry : entrySet) {
 				String key = entry.getKey();
 
-				if ("user_name".equals(key)) {
+				if ("user_name".equals(key) || "second_parent_name".equals(key) || "parent_name".equals(key)) {
 					continue;
 				}
 

@@ -6,14 +6,20 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import cn.qs.bean.fc.FirstCharge;
+import cn.qs.mapper.fc.FirstChargeMapper;
 import cn.qs.mapper.fc.FirstChargeReportMapper;
 import cn.qs.service.fc.FirstChargeReportService;
+import cn.qs.utils.BeanUtils;
 
 @Service
 public class FirstChargeReportServiceImpl implements FirstChargeReportService {
 
 	@Autowired
 	private FirstChargeReportMapper firstChargeReportMapper;
+
+	@Autowired
+	private FirstChargeMapper firstChargeMapper;
 
 	@Override
 	public List<Map<String, Object>> listFirstChargeReport(Map<String, Object> condition) {
@@ -33,6 +39,15 @@ public class FirstChargeReportServiceImpl implements FirstChargeReportService {
 	@Override
 	public List<String> listDistinctParentName() {
 		return firstChargeReportMapper.listDistinctParentName();
+	}
+
+	@Override
+	public void update(FirstCharge firstCharge) {
+		FirstCharge systemFirstCharge = firstChargeMapper.findOne(firstCharge.getId());
+		// 将修改的属性赋值到系统bean上
+		BeanUtils.copyProperties(systemFirstCharge, firstCharge);
+
+		firstChargeMapper.saveAndFlush(systemFirstCharge);
 	}
 
 }

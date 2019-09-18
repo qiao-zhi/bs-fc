@@ -39,6 +39,8 @@ function showUsersTable(pageInfo){
         var tr = "<tr>"
             +'<td>'+index+'</td>'
             +'<td>'+replaceNull(users[i].user_name)+'</td>'
+            +'<td><a href=javascript:void(0) onclick="updateSecondParentName(' + users[i].id + ',\'' + replaceNull(users[i].second_parent_name) + '\',this)"> ' + replaceNull(users[i].second_parent_name) + '</a></td>'
+            +'<td>'+replaceNull(users[i].parent_name)+'</td>'
             +'<td>'+replaceNull(users[i].gmt_created, 10)+'</td>'
             +'<td class="day0">'+reDisposeResult(users[i].第0天)+'</td>'
             +'<td class="day1">'+reDisposeResult(users[i].第1天)+'</td>'
@@ -175,4 +177,22 @@ function deleteUser(id){
 function updateUser(id){
 	var url = '/user/updateUser.html?id='+id;
 	x_admin_show('修改用户',url,600,400);
+}
+
+function updateSecondParentName(id, defaultValue, obj) {
+	if (defaultValue && "-" == defaultValue) {
+		defaultValue = "";
+	}
+	
+	var layer = layui.layer;
+	layer.prompt({
+		  formType: 2,
+		  value: defaultValue,
+		  title: '请输入子账号',
+		  area: ['200px', '50px'] //自定义文本域宽高
+		}, function(value, index, elem){
+			layer.close(index);
+			$.post('/firstcharge/update.html', {"id": id, "secondParentName": value });
+			$(obj).text(replaceNull(value));
+		});
 }
