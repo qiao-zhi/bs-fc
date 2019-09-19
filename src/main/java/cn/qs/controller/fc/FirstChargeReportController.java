@@ -128,7 +128,7 @@ public class FirstChargeReportController {
 			pageSize = MapUtils.getInteger(condition, "pageSize");
 		}
 
-		Map<String, Object> tmpCondition = resetCondition(condition, 30, true, request);
+		Map<String, Object> tmpCondition = resetCondition(condition, 30, false, request);
 		logger.debug("tmpCondition - > {}", tmpCondition);
 
 		// 开始分页
@@ -247,7 +247,7 @@ public class FirstChargeReportController {
 			@RequestParam Map condition) throws IOException {
 
 		// 查数据
-		Map<String, Object> resetCondition = resetCondition(condition, 30, true, request);
+		Map<String, Object> resetCondition = resetCondition(condition, 30, false, request);
 		List<Map<String, Object>> listFirstChargeReport = firstChargeReportService
 				.listFirstChargeReport2(resetCondition);
 

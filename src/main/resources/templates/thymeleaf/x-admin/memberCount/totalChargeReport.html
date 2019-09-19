@@ -50,6 +50,12 @@
           	到
           <input type="text" name="endTime"  placeholder="请选择结束日期" id = "test2" autocomplete="off" class="layui-input dateInput"/>
           
+          <div class="layui-input-inline">
+            <select name="parentName" class="layui-select" lay-search="true">
+              <option value="">全部代理</option>
+              <option th:each="parentName : ${parentNames}" th:text="${parentName}" th:value="${parentName}"></option>
+            </select>
+          </div>
           <button class="layui-btn" type="button" onclick="queryUsersFY()"><i class="layui-icon">&#xe615;</i></button>
           <button class="layui-btn layui-btn-normal" type="button" onclick='clearQueryCondition(this)' title="点击重置查询条件"><i class="layui-icon">&#xe639;</i></button>
           
@@ -62,6 +68,8 @@
           <tr>
             <th>序号</th>
             <th>会员账号</th>
+            <th>子账号</th>
+            <th>上级</th>
             <th>注册日期</th>
             <th>首充日期</th>
             <th>充值金额</th>
@@ -97,5 +105,10 @@ layui.use('laydate', function(){
   laydate.render({
     elem: '#test3'
   });
+});
+
+layui.use('form', function(){
+	  var form = layui.form; 
+	  form.render();
 });
 </script>

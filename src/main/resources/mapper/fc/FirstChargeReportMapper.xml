@@ -19,12 +19,12 @@
 	
 	<select id="listFirstChargeReport2" resultType="map"
 		parameterType="map">
-		SELECT id,user_name,gmt_created,parent_name,second_parent_name
+		SELECT id,user_name,gmt_created,parent_name,second_parent_name,amount as 第0天
 		<foreach collection="syncDates" item="syncDate" index="indexNum"
 			open="," separator=",">
 			IFNULL((SELECT CASE WHEN bet_amount + 0 > 0 THEN bet_amount END FROM member m WHERE
-			m.user_name = c.user_name AND sync_Date = left(date_add(gmt_created, interval ${indexNum} day), 10)),'-') AS
-			第${indexNum}天
+			m.user_name = c.user_name AND sync_Date = left(date_add(gmt_created, interval ${indexNum + 1} day), 10)),'-') AS
+			第${indexNum + 1}天
 		</foreach>
 		FROM first_charge c  
 		<where>
@@ -47,7 +47,7 @@
 
 	<select id="listTotalChargeReport" resultType="map"
 		parameterType="map">
-		Select c.user_name, gmt_created, register_time, ROUND(sum(in_amount), 2) total from first_charge c,member m where m.user_name = c.user_name 
+		Select c.user_name, gmt_created,c.parent_name,second_parent_name, register_time, ROUND(sum(in_amount), 2) total from first_charge c,member m where m.user_name = c.user_name 
 			<if test="user_name != null and user_name != ''">
 				and c.user_name like '%${user_name}%'
 			</if>
@@ -60,6 +60,11 @@
 			<if test="endTime != null and endTime != ''">
 				and m.sync_date &lt;= #{endTime}
 			</if>
+			<foreach collection="parentNames" item="parentName" index="indexNum"
+			open="and c.parent_name in (" separator="," close=")">
+			'${parentName}'
+			</foreach>
+			
 			group by m.user_name order by total desc
 	</select>
 	

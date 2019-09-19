@@ -97,16 +97,16 @@
                     <i class="iconfont nav_right">&#xe697;</i>
                 </a>
                 <ul class="sub-menu">
-                    <li>
+<!--                     <li>
                         <a _href="/firstcharge/firstcharge_report.html">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>会员留存</cite>
                         </a>
-                    </li >
+                    </li > -->
                     <li>
                         <a _href="/firstcharge/firstcharge_report2.html">
                             <i class="iconfont">&#xe6a7;</i>
-                            <cite>会员留存(plus)</cite>
+                            <cite>会员留存</cite>
                         </a>
                     </li >
                     <li>
@@ -116,7 +116,7 @@
                         </a>
                     </li >
                     <li>
-                        <a _href="/fixedReport/list.html">
+                        <a _href="/fixedReport/list.html" th:if="${session.user.roles eq '系统管理员'}">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>日报表</cite>
                         </a>

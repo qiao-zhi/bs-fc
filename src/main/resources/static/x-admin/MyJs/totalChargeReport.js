@@ -31,6 +31,8 @@ function showUsersTable(pageInfo){
         var tr = "<tr>"
             +'<td>'+index+'</td>'
             +'<td>'+replaceNull(users[i].user_name)+'</td>'
+            +'<td>'+replaceNull(users[i].second_parent_name)+'</td>'
+            +'<td>'+replaceNull(users[i].parent_name)+'</td>'
             +'<td class="day0">'+replaceNull(users[i].register_time)+'</td>'
             +'<td class="day1">'+replaceNull(users[i].gmt_created)+'</td>'
             +'<td class="day2">'+replaceNull(users[i].total)+'</td>';
@@ -83,7 +85,7 @@ function usersPage(total,pageNum,pageSize){
             count: total, //数据总数，从服务端得到
             limit:pageSize,//每页显示的条数。laypage将会借助 count 和 limit 计算出分页数。
             curr:pageNum,//当前页号
-            limits:[50, 40, 30, 20, 10],
+            limits:[100, 50, 40, 30, 20, 10],
             layout:['limit','prev', 'page', 'next','skip','count'],//显示哪些分页组件
             jump: function(obj, first){//点击页号的时候执行的函数
                 //obj包含了当前分页的所有参数，比如：
