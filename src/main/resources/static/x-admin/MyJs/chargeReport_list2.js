@@ -40,6 +40,7 @@ function showUsersTable(pageInfo){
             +'<td>'+index+'</td>'
             +'<td>'+replaceNull(users[i].user_name)+'</td>'
             +'<td><a href=javascript:void(0) onclick="updateSecondParentName(' + users[i].id + ',\'' + replaceNull(users[i].second_parent_name) + '\',this)"> ' + replaceNull(users[i].second_parent_name) + '</a></td>'
+            +'<td class="secondParentNameRemark'+users[i].id+'">'+replaceNull(users[i].second_parent_name_remark)+'</td>'
             +'<td>'+replaceNull(users[i].parent_name)+'</td>'
             +'<td>'+replaceNull(users[i].gmt_created, 10)+'</td>'
             +'<td class="day0">'+reDisposeResult(users[i].第0天)+'</td>'
@@ -87,7 +88,7 @@ function showUsersTable(pageInfo){
 }
 
 function doCalculateTotal(total) {
-	var tr = "<tr><td colspan='3'>汇总</td>";
+	var tr = "<tr><td colspan='6'>汇总</td>";
 	
 	var totalRates = [];
 	for (var i = 0; i < 31; i++) {
@@ -184,6 +185,11 @@ function updateSecondParentName(id, defaultValue, obj) {
 		defaultValue = "";
 	}
 	
+	var originRemarkValue = replaceNull($(".secondParentNameRemark" + id).text());
+	if (originRemarkValue && "-" == originRemarkValue) {
+		originRemarkValue = "";
+	}
+	
 	var layer = layui.layer;
 	layer.prompt({
 		  formType: 2,
@@ -191,8 +197,11 @@ function updateSecondParentName(id, defaultValue, obj) {
 		  title: '请输入子账号',
 		  area: ['200px', '50px'] //自定义文本域宽高
 		}, function(value, index, elem){
+			var secondParentNameRemarkValue = $("#secondParentNameRemark").val();
 			layer.close(index);
-			$.post('/firstcharge/update.html', {"id": id, "secondParentName": value });
+			$.post('/firstcharge/update.html', {"id": id, "secondParentName": value, "secondParentNameRemark": secondParentNameRemarkValue});
 			$(obj).text(replaceNull(value));
+			$(".secondParentNameRemark" + id).text(replaceNull(secondParentNameRemarkValue));
 		});
+	$(".layui-layer-content").append("<br/><input type=\"text\" id= \"secondParentNameRemark\" class=\"layui-input\" placeholder=\"描述信息\" value='"+originRemarkValue+"'/>")
 }

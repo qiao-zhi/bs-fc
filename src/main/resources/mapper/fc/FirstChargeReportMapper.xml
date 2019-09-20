@@ -19,7 +19,7 @@
 	
 	<select id="listFirstChargeReport2" resultType="map"
 		parameterType="map">
-		SELECT id,user_name,gmt_created,parent_name,second_parent_name,amount as 第0天
+		SELECT id,user_name,gmt_created,parent_name,second_parent_name,second_parent_name_remark,amount as 第0天
 		<foreach collection="syncDates" item="syncDate" index="indexNum"
 			open="," separator=",">
 			IFNULL((SELECT CASE WHEN bet_amount + 0 > 0 THEN bet_amount END FROM member m WHERE
@@ -47,7 +47,7 @@
 
 	<select id="listTotalChargeReport" resultType="map"
 		parameterType="map">
-		Select c.user_name, gmt_created,c.parent_name,second_parent_name, register_time, ROUND(sum(in_amount), 2) total from first_charge c,member m where m.user_name = c.user_name 
+		Select c.user_name, gmt_created,c.parent_name,second_parent_name,second_parent_name_remark, register_time, ROUND(sum(in_amount), 2) total from first_charge c,member m where m.user_name = c.user_name 
 			<if test="user_name != null and user_name != ''">
 				and c.user_name like '%${user_name}%'
 			</if>

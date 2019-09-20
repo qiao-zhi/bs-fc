@@ -105,11 +105,11 @@ public class MemberCountController {
 				.listTotalChargeReport(resetCondition);
 
 		// 写入文件中
-		String[] headerNames = new String[] { "会员账号", "子账号", "上级", "注册日期", "首充日期", "充值金额" };
+		String[] headerNames = new String[] { "会员账号", "子账号", "子账号描述", "上级", "注册日期", "首充日期", "充值金额" };
 		ExcelExporter hssfWorkExcel = new ExcelExporter(headerNames, "累计充值报表", OfficeVersion.OFFICE_03);
 
-		String[] keys = new String[] { "user_name", "second_parent_name", "parent_name", "register_time", "gmt_created",
-				"total" };
+		String[] keys = new String[] { "user_name", "second_parent_name", "second_parent_name_remark", "parent_name",
+				"register_time", "gmt_created", "total" };
 		hssfWorkExcel.createTableRows(listFirstChargeReport, keys);
 
 		File tmpFile = SystemUtils.getTmpFile();

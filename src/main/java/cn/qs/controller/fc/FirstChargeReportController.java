@@ -252,12 +252,13 @@ public class FirstChargeReportController {
 				.listFirstChargeReport2(resetCondition);
 
 		if (CollectionUtils.isNotEmpty(listFirstChargeReport)) {
-			setCouuntInfo2(listFirstChargeReport);
+			setCountInfo2(listFirstChargeReport);
 		}
 
 		// 写入文件中
-		String[] headerNames = new String[] { "会员账号", "子账号", "上级", "首充日期", "当天" };
-		String[] keys = new String[] { "user_name", "second_parent_name", "parent_name", "gmt_created", "第0天" };
+		String[] headerNames = new String[] { "会员账号", "子账号", "子账号描述", "上级", "首充日期", "当天" };
+		String[] keys = new String[] { "user_name", "second_parent_name", "second_parent_name_remark", "parent_name",
+				"gmt_created", "第0天" };
 
 		for (int i = 0; i < 30; i++) {
 			headerNames = ArrayUtils.add(headerNames, (i + 1) + "天");
@@ -285,7 +286,7 @@ public class FirstChargeReportController {
 		IOUtils.copy(openInputStream, response.getOutputStream());
 	}
 
-	private void setCouuntInfo2(List<Map<String, Object>> listFirstChargeReport) {
+	private void setCountInfo2(List<Map<String, Object>> listFirstChargeReport) {
 		int length = listFirstChargeReport.size();
 
 		// 插入空行
@@ -295,7 +296,6 @@ public class FirstChargeReportController {
 		// 创建最后一行汇总行
 		Map<String, Object> countMap = new HashMap<>();
 		countMap.put("user_name", "汇总信息");
-		countMap.put("gmt_created", "");
 		countMap.put("第0天", 0);
 		for (int i = 0; i < 30; i++) {
 			// 总值
@@ -304,13 +304,15 @@ public class FirstChargeReportController {
 			countMap.put("第" + (i + 1) + "天rate", 0);
 		}
 
+		String[] ignoreKeys = { "user_name", "second_parent_name", "parent_name", "second_parent_name_remark" };
+
 		for (Map<String, Object> result : listFirstChargeReport) {
 			Set<Entry<String, Object>> entrySet = result.entrySet();
 
 			for (Entry<String, Object> entry : entrySet) {
 				String key = entry.getKey();
 
-				if ("user_name".equals(key) || "second_parent_name".equals(key) || "parent_name".equals(key)) {
+				if (ArrayUtils.contains(ignoreKeys, key)) {
 					continue;
 				}
 

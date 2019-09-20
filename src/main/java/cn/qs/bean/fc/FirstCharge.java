@@ -64,6 +64,13 @@ public class FirstCharge {
 	 */
 	private String secondParentName;
 
+	/**
+	 * 描述
+	 */
+	private String secondParentNameRemark;
+
+	private String remark2;
+
 	public String getAmount() {
 		return amount;
 	}
@@ -166,6 +173,22 @@ public class FirstCharge {
 
 	public void setSecondParentName(String secondParentName) {
 		this.secondParentName = secondParentName;
+	}
+
+	public String getRemark2() {
+		return remark2;
+	}
+
+	public void setRemark2(String remark2) {
+		this.remark2 = remark2;
+	}
+
+	public String getSecondParentNameRemark() {
+		return secondParentNameRemark;
+	}
+
+	public void setSecondParentNameRemark(String secondParentNameRemark) {
+		this.secondParentNameRemark = secondParentNameRemark;
 	}
 
 }
