@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import cn.qs.bean.fc.FirstCharge;
 import cn.qs.mapper.fc.FirstChargeMapper;
 import cn.qs.service.fc.FirstChargeService;
+import cn.qs.utils.BeanUtils;
 
 @Service
 public class FirstChargeServiceImpl implements FirstChargeService {
@@ -38,7 +39,13 @@ public class FirstChargeServiceImpl implements FirstChargeService {
 
 	@Override
 	public void update(FirstCharge t) {
-		firstChargeMapper.save(t);
+		FirstCharge systemBean = new FirstCharge();
+		if (t.getId() != null) {
+			systemBean = firstChargeMapper.findOne(t.getId());
+		}
+
+		BeanUtils.copyProperties(systemBean, t);
+		firstChargeMapper.save(systemBean);
 	}
 
 	@Override

@@ -39,7 +39,7 @@ function showUsersTable(pageInfo){
             +'<td class="day1">'+NumberUtils.toFixedDecimal(users[i].bet_amount)+ ' / ' + users[i].bet_count + '</td>'
             +'<td class="day1">'+NumberUtils.toFixedDecimal(users[i].bet_count_all)+ ' / ' + users[i].bet_count + '</td>'
             +'<td class="day1">'+NumberUtils.toFixedDecimal(users[i].profit)+ '</td>'
-            +'<td class="day1">'+NumberUtils.toFixedDecimalWithPercent(users[i].profitability)+ '</td>';
+            +'<td class="day1">'+NumberUtils.toFixedDecimalWithPercent(users[i].profitability, 2)+ '</td>';
             
     	tr +='</tr>'
         $("#memberTbody").append(tr);

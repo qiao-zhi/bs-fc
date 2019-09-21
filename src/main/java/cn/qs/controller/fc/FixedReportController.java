@@ -29,6 +29,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
 import cn.qs.service.fc.FixedReportService;
+import cn.qs.utils.DefaultValue;
 import cn.qs.utils.ExcelExporter;
 import cn.qs.utils.FCNumberUtils;
 import cn.qs.utils.ExcelExporter.OfficeVersion;
@@ -64,7 +65,7 @@ public class FixedReportController {
 		if (ValidateCheck.isNotNull(MapUtils.getString(condition, "pageNum"))) { // 如果不为空的话改变当前页号
 			pageNum = MapUtils.getInteger(condition, "pageNum");
 		}
-		int pageSize = 50;
+		int pageSize = DefaultValue.PAGE_SIZE;
 		if (ValidateCheck.isNotNull(MapUtils.getString(condition, "pageSize"))) { // 如果不为空的话改变当前页大小
 			pageSize = MapUtils.getInteger(condition, "pageSize");
 		}

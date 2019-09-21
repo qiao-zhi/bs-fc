@@ -33,6 +33,7 @@ import com.github.pagehelper.PageInfo;
 
 import cn.qs.bean.user.User;
 import cn.qs.service.fc.FirstChargeReportService;
+import cn.qs.utils.DefaultValue;
 import cn.qs.utils.ExcelExporter;
 import cn.qs.utils.ExcelExporter.OfficeVersion;
 import cn.qs.utils.SystemUtils;
@@ -79,7 +80,7 @@ public class MemberCountController {
 		if (ValidateCheck.isNotNull(MapUtils.getString(condition, "pageNum"))) { // 如果不为空的话改变当前页号
 			pageNum = MapUtils.getInteger(condition, "pageNum");
 		}
-		int pageSize = 50;
+		int pageSize = DefaultValue.PAGE_SIZE;
 		if (ValidateCheck.isNotNull(MapUtils.getString(condition, "pageSize"))) { // 如果不为空的话改变当前页大小
 			pageSize = MapUtils.getInteger(condition, "pageSize");
 		}

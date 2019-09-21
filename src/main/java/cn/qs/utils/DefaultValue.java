@@ -1,6 +1,5 @@
 package cn.qs.utils;
 
-
 /**
  * 默认值
  * 
@@ -12,7 +11,7 @@ public class DefaultValue {
 	/**
 	 * 每页数量
 	 */
-	public static final int PAGE_SIZE = 6;
+	public static final int PAGE_SIZE = 100;
 
 	/**
 	 * 移动端token的默认失效时间

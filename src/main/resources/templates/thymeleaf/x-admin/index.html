@@ -110,7 +110,7 @@
                         </a>
                     </li >
                     <li>
-                        <a _href="/memberCount/totalChargeReport.html">
+                        <a _href="/memberCount/totalChargeReport.html" th:if="${session.user.roles ne '基本用户'}">
                             <i class="iconfont">&#xe6a7;</i>
                             <cite>累计充值报表</cite>
                         </a>

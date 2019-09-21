@@ -100,7 +100,7 @@ function doCalculateTotal(total) {
 			}
 		})
 		
-		tr += "<td>"+ oneValues +"<br/>(" + ((oneValues/total) * 100).toFixed(2)  +"% / " + NumberUtils.toFixedDecimal(sumValue) + ")</td>";
+		tr += "<td>"+ oneValues +"<br/>(" + ((oneValues/total) * 100).toFixed(0)  +"% / " + NumberUtils.toFixedDecimal(sumValue) + ")</td>";
 	}
 	
 	tr += "</tr>";

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import cn.qs.bean.fc.Member;
 import cn.qs.mapper.fc.MemberMapper;
 import cn.qs.service.fc.MemberService;
+import cn.qs.utils.BeanUtils;
 
 @Service
 public class MemberServiceImpl implements MemberService {
@@ -38,7 +39,13 @@ public class MemberServiceImpl implements MemberService {
 
 	@Override
 	public void update(Member t) {
-		memberMapper.saveAndFlush(t);
+		Member systemBean = new Member();
+		if (t.getId() != null) {
+			systemBean = memberMapper.findOne(t.getId());
+		}
+
+		BeanUtils.copyProperties(systemBean, t);
+		memberMapper.saveAndFlush(systemBean);
 	}
 
 	@Override

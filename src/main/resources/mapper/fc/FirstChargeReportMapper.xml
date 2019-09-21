@@ -43,6 +43,8 @@
 			'${parentName}'
 			</foreach>
 		</where>
+		
+		order by second_parent_name is null, second_parent_name, user_name
 	</select>
 
 	<select id="listTotalChargeReport" resultType="map"

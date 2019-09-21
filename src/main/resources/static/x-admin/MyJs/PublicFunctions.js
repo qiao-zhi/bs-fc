@@ -33,7 +33,7 @@ var NumberUtils = {
 		}
 
 		if (!scale) {
-			scale = 2;
+			scale = 0;
 		}
 
 		value = parseFloat(value);
@@ -44,7 +44,7 @@ var NumberUtils = {
 		value = NumberUtils.toFixedDecimal(value, 10);
 
 		if (!scale) {
-			scale = 2;
+			scale = 0;
 		}
 
 		value = parseFloat(value * 100);

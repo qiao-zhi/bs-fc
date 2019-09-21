@@ -44,6 +44,7 @@ import com.github.pagehelper.PageInfo;
 import cn.qs.bean.fc.FirstCharge;
 import cn.qs.bean.user.User;
 import cn.qs.service.fc.FirstChargeReportService;
+import cn.qs.utils.DefaultValue;
 import cn.qs.utils.ExcelExporter;
 import cn.qs.utils.ExcelExporter.OfficeVersion;
 import cn.qs.utils.FCNumberUtils;
@@ -98,7 +99,7 @@ public class FirstChargeReportController {
 		if (ValidateCheck.isNotNull(MapUtils.getString(condition, "pageNum"))) { // 如果不为空的话改变当前页号
 			pageNum = MapUtils.getInteger(condition, "pageNum");
 		}
-		int pageSize = 50;
+		int pageSize = DefaultValue.PAGE_SIZE;
 		if (ValidateCheck.isNotNull(MapUtils.getString(condition, "pageSize"))) { // 如果不为空的话改变当前页大小
 			pageSize = MapUtils.getInteger(condition, "pageSize");
 		}
@@ -123,7 +124,7 @@ public class FirstChargeReportController {
 		if (ValidateCheck.isNotNull(MapUtils.getString(condition, "pageNum"))) { // 如果不为空的话改变当前页号
 			pageNum = MapUtils.getInteger(condition, "pageNum");
 		}
-		int pageSize = 50;
+		int pageSize = DefaultValue.PAGE_SIZE;
 		if (ValidateCheck.isNotNull(MapUtils.getString(condition, "pageSize"))) { // 如果不为空的话改变当前页大小
 			pageSize = MapUtils.getInteger(condition, "pageSize");
 		}
@@ -326,10 +327,10 @@ public class FirstChargeReportController {
 				Object value = entry.getValue();
 				if (!"-".equals(value)) {
 					double doubleValue = NumberUtils.toDouble(value.toString());
-					result.put(key, "1" + " / " + FCNumberUtils.toFixedDecimal(doubleValue, 2));
+					result.put(key, "1" + " / " + FCNumberUtils.toFixedDecimal(doubleValue, 0));
 
 					countMap.put(key,
-							FCNumberUtils.toFixedDecimal(doubleValue + MapUtils.getDoubleValue(countMap, key, 0D), 2));
+							FCNumberUtils.toFixedDecimal(doubleValue + MapUtils.getDoubleValue(countMap, key, 0D), 0));
 					countMap.put(key + "rate", MapUtils.getInteger(countMap, key + "rate", 0) + 1);
 				}
 			}
@@ -342,7 +343,7 @@ public class FirstChargeReportController {
 			Object value = countMap.get(key);
 			Integer rateValue = MapUtils.getInteger(countMap, rateKey);
 
-			String result = rateValue + "(" + FCNumberUtils.toFixedDecimalWithPercent((double) rateValue / length, 2)
+			String result = rateValue + "(" + FCNumberUtils.toFixedDecimalWithPercent((double) rateValue / length, 0)
 					+ value + ")";
 			countMap.put(key, result);
 		}

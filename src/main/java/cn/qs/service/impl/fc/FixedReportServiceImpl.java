@@ -10,6 +10,7 @@ import cn.qs.bean.fc.FixedReport;
 import cn.qs.mapper.fc.FixedReportMapper;
 import cn.qs.mapper.fc.custom.FixedReportCustomMapper;
 import cn.qs.service.fc.FixedReportService;
+import cn.qs.utils.BeanUtils;
 
 @Service
 public class FixedReportServiceImpl implements FixedReportService {
@@ -42,7 +43,13 @@ public class FixedReportServiceImpl implements FixedReportService {
 
 	@Override
 	public void update(FixedReport t) {
-		fixedReportMapper.save(t);
+		FixedReport systemBean = new FixedReport();
+		if (t.getId() != null) {
+			systemBean = fixedReportMapper.findOne(t.getId());
+		}
+
+		BeanUtils.copyProperties(systemBean, t);
+		fixedReportMapper.save(systemBean);
 	}
 
 	@Override
