@@ -32,6 +32,7 @@ public class Member {
 	/**
 	 * 充值金额
 	 */
+	@Index(name = "memberInAmount") // 该注解来自Hibernate包
 	private String inAmount;
 	private String returnAmount;
 	private String grade;
