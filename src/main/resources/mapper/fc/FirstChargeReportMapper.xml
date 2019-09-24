@@ -49,12 +49,10 @@
 
 	<select id="listTotalChargeReport" resultType="map"
 		parameterType="map">
-		Select c.user_name, gmt_created,c.parent_name,second_parent_name,second_parent_name_remark, register_time, ROUND(sum(in_amount), 2) total from first_charge c,member m where m.user_name = c.user_name 
+		select * from (
+		Select c.user_name, gmt_created,c.parent_name,second_parent_name,second_parent_name_remark, register_time, ROUND(sum(in_amount), 2) total, (select max(gmt_modified) from login_log  where user_name = c.user_name) as last_login_time from first_charge c,member m where m.user_name = c.user_name 
 			<if test="user_name != null and user_name != ''">
 				and c.user_name like '%${user_name}%'
-			</if>
-			<if test="gmt_created != null and gmt_created != ''">
-				 and gmt_created LIKE '${gmt_created}%'
 			</if>
 			<if test="startTime != null and startTime != ''">
 				and m.sync_date >= #{startTime}
@@ -68,6 +66,10 @@
 			</foreach>
 			
 			group by m.user_name order by total desc
+			) tmp 
+			<if test="gmt_created != null and gmt_created != ''">
+				 where tmp.last_login_time LIKE '${gmt_created}%'
+			</if>
 	</select>
 	
 	<select id="listDistinctParentName" resultType="string"

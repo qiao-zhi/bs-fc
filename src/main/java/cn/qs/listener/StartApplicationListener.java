@@ -29,7 +29,7 @@ public class StartApplicationListener implements ServletContextListener {
 			public void run() {
 				LOGGER.info("容器启动，开启线程同步数据创建默认用户");
 				try {
-					Thread.sleep(2 * 60 * 1000L);
+					Thread.sleep(1 * 60 * 1000L);
 				} catch (InterruptedException e) {
 					// ignore
 				}
@@ -47,6 +47,7 @@ public class StartApplicationListener implements ServletContextListener {
 					String formatedTime = DateFormatUtils.format(time, "yyyy-MM-dd");
 					CrawUtils.doCrawData(formatedTime, formatedTime);
 
+					System.out.println(formatedTime);
 					now.add(Calendar.DAY_OF_MONTH, -1);
 					defaultSyncTimes--;
 				}

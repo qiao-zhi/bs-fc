@@ -1,7 +1,9 @@
 package cn.qs.utils;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.Map;
 import org.apache.commons.collections.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.jsoup.Connection;
 import org.jsoup.Connection.Method;
 import org.jsoup.Connection.Response;
@@ -25,9 +28,11 @@ import com.alibaba.fastjson.JSONObject;
 
 import cn.qs.bean.fc.FirstCharge;
 import cn.qs.bean.fc.FixedReport;
+import cn.qs.bean.fc.LoginLog;
 import cn.qs.bean.fc.Member;
 import cn.qs.service.fc.FirstChargeService;
 import cn.qs.service.fc.FixedReportService;
+import cn.qs.service.fc.LoginLogService;
 import cn.qs.service.fc.MemberService;
 
 public class CrawUtils {
@@ -44,6 +49,8 @@ public class CrawUtils {
 
 	private static final String URL_CRAW_FIXED_REPORT = "http://xfcai.jiuheyikuang.cn/v1/report/tenantReport?type=1";
 
+	private static final String URL_CRAW_LAST_LOGIN_REPORT = "http://xfcai.jiuheyikuang.cn/v1/users/loginLog?pageSize=20";
+
 	private static Map<String, String> cookies = new HashMap<String, String>();
 
 	public static void main(String[] args) {
@@ -52,7 +59,7 @@ public class CrawUtils {
 
 	public static void doCrawTodayData() {
 		// 不传日期代表爬当天数据
-		doCrawData("", "");
+		doCrawData("2019-09-22", "2019-09-22");
 	}
 
 	public static void doCrawData(String startTime, String endTime) {
@@ -62,10 +69,70 @@ public class CrawUtils {
 		}
 
 		crawMembers(startTime, endTime);
-		crawFirstChatges(startTime, endTime);
+		crawFirstCharges(startTime, endTime);
 		crawFixedReport(startTime, endTime);
+		crawLoginLog(startTime, endTime);
 
 		logout();
+	}
+
+	private static void crawLoginLog(String startTime, String endTime) {
+		if (StringUtils.isBlank(startTime) && StringUtils.isBlank(endTime)) {
+			Date today = new Date();
+			Date yesterday = DateUtils.addDays(new Date(), -1);
+			startTime = DateFormatUtils.format(yesterday, "yyyy-MM-dd");
+			endTime = DateFormatUtils.format(today, "yyyy-MM-dd");
+		} else if (startTime.equals(endTime)) {
+			try {
+				Date endTimeDate = DateUtils.parseDate(endTime, "yyyy-MM-dd");
+				Date endTimeDateNextDay = DateUtils.addDays(endTimeDate, 1);
+				endTime = DateFormatUtils.format(endTimeDateNextDay, "yyyy-MM-dd");
+			} catch (ParseException ignored) {
+				// ignored
+			}
+
+		}
+
+		String url = URL_CRAW_LAST_LOGIN_REPORT + "&startTime=" + startTime + "&endTime=" + endTime;
+
+		// 模拟最多有200000页数据
+		int i = 1;
+		while (i < 200000) {
+			String tmpUrl = url + "&pageNum=" + (i++);
+			LOGGER.debug("tmpUrl -> {}", tmpUrl);
+
+			String responseInfo = requestURL(tmpUrl);
+			String bodyInfo = extractContentByTag(responseInfo, "body");
+			HashMap<String, Object> parseObject = JSONObject.parseObject(bodyInfo, HashMap.class);
+
+			String dataJSON = MapUtils.getString(parseObject, "data", "");
+			HashMap data = JSONObject.parseObject(dataJSON, HashMap.class);
+			if (MapUtils.getInteger(data, "total", 0).equals(0) || "[]".equals(MapUtils.getString(data, "result"))) {
+				break;
+			}
+
+			batchDisposeLoginLogs(MapUtils.getString(data, "result"), startTime);
+		}
+	}
+
+	private static void batchDisposeLoginLogs(String string, String syncDate) {
+		if (StringUtils.isEmpty(string)) {
+			return;
+		}
+
+		LOGGER.debug("string -> {}", string);
+		List<LoginLog> loginLogs = JSONArray.parseArray(string, LoginLog.class);
+		for (LoginLog log : loginLogs) {
+			log.setSyncDate(syncDate);
+
+			LoginLogService loginLogService = SpringBootUtils.getBean(LoginLogService.class);
+			LoginLog findById = loginLogService.findById(log.getId());
+			if (findById != null && findById.getUserId() != null) {
+				continue;
+			} else {
+				loginLogService.add(log);
+			}
+		}
 	}
 
 	private static void crawFixedReport(String startTime, String endTime) {
@@ -111,7 +178,7 @@ public class CrawUtils {
 
 		// 模拟最多有200000页数据
 		int i = 1;
-		while (i < 20) {
+		while (i < 200000) {
 			String tmpUrl = url + "&pageNum=" + (i++);
 			LOGGER.debug("tmpUrl -> {}", tmpUrl);
 
@@ -121,7 +188,7 @@ public class CrawUtils {
 
 			String dataJSON = MapUtils.getString(parseObject, "data", "");
 			HashMap data = JSONObject.parseObject(dataJSON, HashMap.class);
-			if (MapUtils.getInteger(data, "total", 0).equals(0)) {
+			if (MapUtils.getInteger(data, "total", 0).equals(0) || "[]".equals(MapUtils.getString(data, "result"))) {
 				break;
 			}
 
@@ -149,10 +216,9 @@ public class CrawUtils {
 				memberService.add(member);
 			}
 		}
-
 	}
 
-	private static void crawFirstChatges(String startTime, String endTime) {
+	private static void crawFirstCharges(String startTime, String endTime) {
 		startTime = StringUtils.defaultIfBlank(startTime, DateFormatUtils.format(new Date(), "yyyy-MM-dd"));
 		endTime = StringUtils.defaultIfBlank(endTime, DateFormatUtils.format(new Date(), "yyyy-MM-dd"));
 
@@ -160,7 +226,7 @@ public class CrawUtils {
 
 		// 模拟最多有200000页数据
 		int i = 1;
-		while (i < 20) {
+		while (i < 200000) {
 			String tmpUrl = url + "&pageNum=" + (i++);
 			LOGGER.debug("tmpUrl -> {}", tmpUrl);
 
@@ -170,7 +236,7 @@ public class CrawUtils {
 
 			String dataJSON = MapUtils.getString(parseObject, "data", "");
 			HashMap data = JSONObject.parseObject(dataJSON, HashMap.class);
-			if (MapUtils.getInteger(data, "total", 0).equals(0)) {
+			if (MapUtils.getInteger(data, "total", 0).equals(0) || "[]".equals(MapUtils.getString(data, "result"))) {
 				break;
 			}
 

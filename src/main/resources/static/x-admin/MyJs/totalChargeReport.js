@@ -35,7 +35,7 @@ function showUsersTable(pageInfo){
             +'<td>'+replaceNull(users[i].second_parent_name_remark)+'</td>'
             +'<td>'+replaceNull(users[i].parent_name)+'</td>'
             +'<td class="day0">'+replaceNull(users[i].register_time)+'</td>'
-            +'<td class="day1">'+replaceNull(users[i].gmt_created)+'</td>'
+            +'<td class="day1">'+replaceNull(users[i].last_login_time)+'</td>'
             +'<td class="day2">'+replaceNull(users[i].total)+'</td>';
             
     	tr +='</tr>'
