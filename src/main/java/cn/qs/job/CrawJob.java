@@ -12,10 +12,10 @@ public class CrawJob {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CrawJob.class);
 
-	@Scheduled(cron = "0 0 23 * * ?")
+	@Scheduled(cron = "0 5 0 * * ?")
 	public void cron() {
 		LOGGER.info("开始爬虫");
-		CrawUtils.doCrawTodayData();
+		CrawUtils.doCrawLastData();
 		LOGGER.info("结束爬虫");
 	}
 }

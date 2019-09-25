@@ -346,4 +346,10 @@ public class CrawUtils {
 		return StringUtils.join(result, "");
 	}
 
+	public static void doCrawLastData() {
+		Date yesterday = DateUtils.addDays(new Date(), -1);
+		String yesterdayStr = DateFormatUtils.format(yesterday, "yyyy-MM-dd");
+		doCrawData(yesterdayStr, yesterdayStr);
+	}
+
 }
