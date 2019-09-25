@@ -39,7 +39,7 @@ function showUsersTable(pageInfo){
         var tr = "<tr>"
             +'<td>'+index+'</td>'
             +'<td>'+replaceNull(users[i].user_name)+'</td>'
-            +'<td><a href=javascript:void(0) onclick="updateSecondParentName(' + users[i].id + ',\'' + replaceNull(users[i].second_parent_name) + '\',this)"> ' + replaceNull(users[i].second_parent_name) + '</a></td>'
+            +'<td><a href=javascript:void(0) onclick="updateSecondParentName(' + users[i].id + ',this)">' + replaceNull(users[i].second_parent_name) + '</a></td>'
             +'<td class="secondParentNameRemark'+users[i].id+'">'+replaceNull(users[i].second_parent_name_remark)+'</td>'
             +'<td>'+replaceNull(users[i].parent_name)+'</td>'
             +'<td>'+replaceNull(users[i].gmt_created, 10)+'</td>'
@@ -180,7 +180,8 @@ function updateUser(id){
 	x_admin_show('修改用户',url,600,400);
 }
 
-function updateSecondParentName(id, defaultValue, obj) {
+function updateSecondParentName(id, obj) {
+	var defaultValue = $(obj).text();
 	if (defaultValue && "-" == defaultValue) {
 		defaultValue = "";
 	}
