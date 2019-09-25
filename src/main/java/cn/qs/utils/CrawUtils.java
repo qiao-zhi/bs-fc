@@ -3,7 +3,6 @@ package cn.qs.utils;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +58,7 @@ public class CrawUtils {
 
 	public static void doCrawTodayData() {
 		// 不传日期代表爬当天数据
-		doCrawData("2019-09-22", "2019-09-22");
+		doCrawData("", "");
 	}
 
 	public static void doCrawData(String startTime, String endTime) {
