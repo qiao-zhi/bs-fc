@@ -37,6 +37,7 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.w3c.dom.css.ElementCSSInlineStyle;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -129,7 +130,7 @@ public class FirstChargeReportController {
 			pageSize = MapUtils.getInteger(condition, "pageSize");
 		}
 
-		Map<String, Object> tmpCondition = resetCondition(condition, 30, false, request);
+		Map<String, Object> tmpCondition = resetCondition(condition, 30, true, request);
 		logger.debug("tmpCondition - > {}", tmpCondition);
 
 		// 开始分页
@@ -248,7 +249,7 @@ public class FirstChargeReportController {
 			@RequestParam Map condition) throws IOException {
 
 		// 查数据
-		Map<String, Object> resetCondition = resetCondition(condition, 30, false, request);
+		Map<String, Object> resetCondition = resetCondition(condition, 30, true, request);
 		List<Map<String, Object>> listFirstChargeReport = firstChargeReportService
 				.listFirstChargeReport2(resetCondition);
 
@@ -297,12 +298,11 @@ public class FirstChargeReportController {
 		// 创建最后一行汇总行
 		Map<String, Object> countMap = new HashMap<>();
 		countMap.put("user_name", "汇总信息");
-		countMap.put("第0天", 0);
-		for (int i = 0; i < 30; i++) {
+		for (int i = 0; i < 31; i++) {
 			// 总值
-			countMap.put("第" + (i + 1) + "天", 0);
+			countMap.put("第" + i + "天", 0);
 			// 标记多少个1
-			countMap.put("第" + (i + 1) + "天rate", 0);
+			countMap.put("第" + i + "天rate", 0);
 		}
 
 		String[] ignoreKeys = { "user_name", "second_parent_name", "parent_name", "second_parent_name_remark" };
@@ -325,26 +325,35 @@ public class FirstChargeReportController {
 				}
 
 				Object value = entry.getValue();
-				if (!"-".equals(value)) {
-					double doubleValue = NumberUtils.toDouble(value.toString());
-					result.put(key, "1" + " / " + FCNumberUtils.toFixedDecimal(doubleValue, 0));
+				// 投注
+				if (key.endsWith("投注")) {
+					if (!"-".equals(value)) {
+						String tmpKey = key.replace("投注", "rate");
+						countMap.put(tmpKey, MapUtils.getInteger(countMap, tmpKey) + 1);
+					}
+				} else { // 充值
+					// 汇总信息保存
+					countMap.put(key, MapUtils.getDouble(countMap, key, 0D) + NumberUtils.toDouble(value.toString()));
 
-					countMap.put(key,
-							FCNumberUtils.toFixedDecimal(doubleValue + MapUtils.getDoubleValue(countMap, key, 0D), 0));
-					countMap.put(key + "rate", MapUtils.getInteger(countMap, key + "rate", 0) + 1);
+					// 重写值: 是否有投注/充值金额
+					String betAmountKey = key + "投注";
+					String betValue = !"-".equals(MapUtils.getString(result, betAmountKey)) ? "1" : "-";
+					result.put(key, betValue + " / " + value);
 				}
+
 			}
 		}
 
 		// 处理汇总行
-		for (int i = 0; i <= 30; i++) {
+		for (int i = 0; i < 31; i++) {
 			String key = "第" + i + "天";
 			String rateKey = "第" + i + "天rate";
 			Object value = countMap.get(key);
+			String doubleValue = FCNumberUtils.toFixedDecimal(value.toString(), 2);
 			Integer rateValue = MapUtils.getInteger(countMap, rateKey);
 
 			String result = rateValue + "(" + FCNumberUtils.toFixedDecimalWithPercent((double) rateValue / length, 0)
-					+ value + ")";
+					+ " / " + doubleValue + ")";
 			countMap.put(key, result);
 		}
 

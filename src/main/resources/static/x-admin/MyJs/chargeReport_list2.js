@@ -14,12 +14,11 @@ function queryUsersFY(){
     });
 }
 
-function reDisposeResult(value) {
-	if ("-" == value) {
-		return value;
-	}
+function reDisposeResult(inValue, betValue) {
+	var inTag = inValue != "-" ? NumberUtils.toFixedDecimal(inValue) : "-";
+	var betTag = betValue != "-" ? "1" : "-";
 	
-	return "1" + " / " + NumberUtils.toFixedDecimal(value);
+	return betTag + "/" + inTag;
 }
 
 /**
@@ -43,37 +42,37 @@ function showUsersTable(pageInfo){
             +'<td class="secondParentNameRemark'+users[i].id+'">'+replaceNull(users[i].second_parent_name_remark)+'</td>'
             +'<td>'+replaceNull(users[i].parent_name)+'</td>'
             +'<td>'+replaceNull(users[i].gmt_created, 10)+'</td>'
-            +'<td class="day0">'+reDisposeResult(users[i].第0天)+'</td>'
-            +'<td class="day1">'+reDisposeResult(users[i].第1天)+'</td>'
-            +'<td class="day2">'+reDisposeResult(users[i].第2天)+'</td>'
-            +'<td class="day3">'+reDisposeResult(users[i].第3天)+'</td>'
-            +'<td class="day4">'+reDisposeResult(users[i].第4天)+'</td>'
-            +'<td class="day5">'+reDisposeResult(users[i].第5天)+'</td>'
-            +'<td class="day6">'+reDisposeResult(users[i].第6天)+'</td>'
-            +'<td class="day7">'+reDisposeResult(users[i].第7天)+'</td>'
-            +'<td class="day8">'+reDisposeResult(users[i].第8天)+'</td>'
-            +'<td class="day9">'+reDisposeResult(users[i].第9天)+'</td>'
-            +'<td class="day10">'+reDisposeResult(users[i].第10天)+'</td>'
-            +'<td class="day11">'+reDisposeResult(users[i].第11天)+'</td>'
-            +'<td class="day12">'+reDisposeResult(users[i].第12天)+'</td>'
-            +'<td class="day13">'+reDisposeResult(users[i].第13天)+'</td>'
-            +'<td class="day14">'+reDisposeResult(users[i].第14天)+'</td>'
-            +'<td class="day15">'+reDisposeResult(users[i].第15天)+'</td>'
-            +'<td class="day16">'+reDisposeResult(users[i].第16天)+'</td>'
-            +'<td class="day17">'+reDisposeResult(users[i].第17天)+'</td>'
-            +'<td class="day18">'+reDisposeResult(users[i].第18天)+'</td>'
-            +'<td class="day19">'+reDisposeResult(users[i].第19天)+'</td>'
-            +'<td class="day20">'+reDisposeResult(users[i].第20天)+'</td>'
-            +'<td class="day21">'+reDisposeResult(users[i].第21天)+'</td>'
-            +'<td class="day22">'+reDisposeResult(users[i].第22天)+'</td>'
-            +'<td class="day23">'+reDisposeResult(users[i].第23天)+'</td>'
-            +'<td class="day24">'+reDisposeResult(users[i].第24天)+'</td>'
-            +'<td class="day25">'+reDisposeResult(users[i].第25天)+'</td>'
-            +'<td class="day26">'+reDisposeResult(users[i].第26天)+'</td>'
-            +'<td class="day27">'+reDisposeResult(users[i].第27天)+'</td>'
-            +'<td class="day28">'+reDisposeResult(users[i].第28天)+'</td>'
-            +'<td class="day29">'+reDisposeResult(users[i].第29天)+'</td>'
-            +'<td class="day30">'+reDisposeResult(users[i].第30天)+'</td>';
+            +'<td class="day0">'+reDisposeResult(users[i].第0天,users[i].第0天投注)+'</td>'
+            +'<td class="day1">'+reDisposeResult(users[i].第1天,users[i].第1天投注)+'</td>'
+            +'<td class="day2">'+reDisposeResult(users[i].第2天,users[i].第2天投注)+'</td>'
+            +'<td class="day3">'+reDisposeResult(users[i].第3天,users[i].第3天投注)+'</td>'
+            +'<td class="day4">'+reDisposeResult(users[i].第4天,users[i].第4天投注)+'</td>'
+            +'<td class="day5">'+reDisposeResult(users[i].第5天,users[i].第5天投注)+'</td>'
+            +'<td class="day6">'+reDisposeResult(users[i].第6天,users[i].第6天投注)+'</td>'
+            +'<td class="day7">'+reDisposeResult(users[i].第7天,users[i].第7天投注)+'</td>'
+            +'<td class="day8">'+reDisposeResult(users[i].第8天,users[i].第8天投注)+'</td>'
+            +'<td class="day9">'+reDisposeResult(users[i].第9天,users[i].第9天投注)+'</td>'
+            +'<td class="day10">'+reDisposeResult(users[i].第10天,users[i].第10天投注)+'</td>'
+            +'<td class="day11">'+reDisposeResult(users[i].第11天,users[i].第11天投注)+'</td>'
+            +'<td class="day12">'+reDisposeResult(users[i].第12天,users[i].第12天投注)+'</td>'
+            +'<td class="day13">'+reDisposeResult(users[i].第13天,users[i].第13天投注)+'</td>'
+            +'<td class="day14">'+reDisposeResult(users[i].第14天,users[i].第14天投注)+'</td>'
+            +'<td class="day15">'+reDisposeResult(users[i].第15天,users[i].第15天投注)+'</td>'
+            +'<td class="day16">'+reDisposeResult(users[i].第16天,users[i].第16天投注)+'</td>'
+            +'<td class="day17">'+reDisposeResult(users[i].第17天,users[i].第17天投注)+'</td>'
+            +'<td class="day18">'+reDisposeResult(users[i].第18天,users[i].第18天投注)+'</td>'
+            +'<td class="day19">'+reDisposeResult(users[i].第19天,users[i].第19天投注)+'</td>'
+            +'<td class="day20">'+reDisposeResult(users[i].第20天,users[i].第20天投注)+'</td>'
+            +'<td class="day21">'+reDisposeResult(users[i].第21天,users[i].第21天投注)+'</td>'
+            +'<td class="day22">'+reDisposeResult(users[i].第22天,users[i].第22天投注)+'</td>'
+            +'<td class="day23">'+reDisposeResult(users[i].第23天,users[i].第23天投注)+'</td>'
+            +'<td class="day24">'+reDisposeResult(users[i].第24天,users[i].第24天投注)+'</td>'
+            +'<td class="day25">'+reDisposeResult(users[i].第25天,users[i].第25天投注)+'</td>'
+            +'<td class="day26">'+reDisposeResult(users[i].第26天,users[i].第26天投注)+'</td>'
+            +'<td class="day27">'+reDisposeResult(users[i].第27天,users[i].第27天投注)+'</td>'
+            +'<td class="day28">'+reDisposeResult(users[i].第28天,users[i].第28天投注)+'</td>'
+            +'<td class="day29">'+reDisposeResult(users[i].第29天,users[i].第29天投注)+'</td>'
+            +'<td class="day30">'+reDisposeResult(users[i].第30天,users[i].第30天投注)+'</td>';
             
     	tr +='</tr>'
         $("#memberTbody").append(tr);
@@ -94,13 +93,19 @@ function doCalculateTotal(total) {
 	for (var i = 0; i < 31; i++) {
 		var oneValues = 0, sumValue = 0;
 		$(".day" + i).each(function() {
-			if ("-" != $(this).text()) {
+			var text = $(this).text().replace(" ","");
+			var arr = text.split("/");
+			var betTag = arr[0];
+			var inAmount = arr[1];
+			if ("-" != betTag) {
 				oneValues++;
-				sumValue = parseFloat(sumValue) + parseFloat($(this).text().replace("1 / ", ""));
+			}
+			if (inAmount != "-") {
+				sumValue = parseFloat(sumValue) + parseFloat(inAmount);
 			}
 		})
 		
-		tr += "<td>"+ oneValues +"<br/>(" + ((oneValues/total) * 100).toFixed(0)  +"% / " + NumberUtils.toFixedDecimal(sumValue) + ")</td>";
+		tr += "<td>"+ oneValues +"<br/>(" + ((oneValues/total) * 100).toFixed(0)  +"% / " + sumValue + ")</td>";
 	}
 	
 	tr += "</tr>";

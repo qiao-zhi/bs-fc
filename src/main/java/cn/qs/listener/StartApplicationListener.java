@@ -36,7 +36,7 @@ public class StartApplicationListener implements ServletContextListener {
 
 				doCreateAdmin();
 
-				doCrawDatas();
+				// doCrawDatas();
 			}
 
 			private void doCrawDatas() {

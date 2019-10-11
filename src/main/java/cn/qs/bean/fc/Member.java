@@ -18,6 +18,11 @@ public class Member {
 	private String userId; // 会员ID
 
 	private String profit;
+
+	/**
+	 * 投注金额
+	 */
+	@Index(name = "memberBetAmount") // 该注解来自Hibernate包
 	private String betAmount;
 	@Index(name = "memberBetCount") // 该注解来自Hibernate包
 	private String betCount;
